@@ -30,8 +30,12 @@ class SpritesheetBase:
                 rate = float(rate)
                 # Generate frame info
                 fdur = 1 / rate
-                value = [( ((x+i) * c, y * c, w*c - 1, h*c - 1), fdur )
-                        for i in range(nframes)]
+                value = [(
+                            ((x+i) * c, y * c,
+                                # w/h -1 to avoid edges
+                                w*c - 1, h*c - 1),
+                            fdur
+                        ) for i in range(nframes)]
                 # Add this frameset to list of sprites
                 sprites.append((key, value))
         return sprites
