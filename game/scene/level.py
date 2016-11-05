@@ -1,6 +1,6 @@
 from cocos.scene import Scene
 
-from ..layers.player import PlayerLayer
+from ..layer.player import PlayerLayer
 
 
 class LevelScene(Scene):
