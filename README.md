@@ -1,3 +1,21 @@
+(to be named)
+=============
+
+Running
+-------
+
+You will need Python 3. This game is developed and tested on Python 3.5
+(earlier versions may work, though are unsupported).
+
+Install dependencies:
+
+    $ pip install cocos2d
+
+Running the game:
+
+    $ python3 <directory containing __main__.py>
+
+
 # GitHub Game Off 2016
 
 ![GitHub Game Off 2016 Theme is Hacking, Modding, or Augmenting](https://cloud.githubusercontent.com/assets/121322/19498019/d8827370-9543-11e6-82d8-6da822b6147b.png)
