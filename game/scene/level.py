@@ -1,15 +1,33 @@
+from cocos.euclid import Vector2
+from cocos.layer.scrolling import ScrollingManager
 from cocos.scene import Scene
+from cocos.tiles import load_tmx
+import pyglet.resource
 
 from ..input import InputHandler, J, K
 from ..layer.player import PlayerLayer
 
 
+def load_map(mapname):
+    pyglet.resource.path.insert(0, 'asset/map/' + mapname)
+    pyglet.resource.reindex()
+    layer = load_tmx('map.tmx')
+    pyglet.resource.path.pop(0)
+    pyglet.resource.reindex()
+    return layer
+
+
 class LevelScene(Scene, InputHandler):
     is_event_handler = True
 
-    def __init__(self):
+    def __init__(self, lvlname):
         player = PlayerLayer()
-        Scene.__init__(self, player)
+        level = load_map(lvlname)
+        m = level['topology']
+        mgr = ScrollingManager()
+        mgr.add(m)
+        mgr.set_focus(0, 0)
+        Scene.__init__(self, player, mgr)
         InputHandler.__init__(self)
 
         self.bindings['keyboard'] = keybinds = {}
@@ -34,8 +52,27 @@ class LevelScene(Scene, InputHandler):
         self.bindings['joystick'] = {}
         self.bindings['joystick'].update({
             J.LSX: player.setxvel,
-            J.LSY: lambda val: player.setyvel(-val)
+            J.LSY: lambda val: player.setyvel(-val),
+
+            J.RSX: self.updatecamx,
+            J.RSY: self.updatecamy
         })
+
+        self.campos = Vector2(330, 380)
+        self.camvel = Vector2(0, 0)
+        self.mgr = mgr
+
+        self.schedule(self.tick)
+
+    def updatecamx(self, value):
+        self.camvel.x = value
+
+    def updatecamy(self, value):
+        self.camvel.y = -value
+
+    def tick(self, dt):
+        self.campos += self.camvel * dt * 60
+        self.mgr.force_focus(self.campos.x, self.campos.y)
 
     def on_enter(self):
         Scene.on_enter(self)

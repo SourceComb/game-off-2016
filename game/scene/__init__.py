@@ -1,3 +1,5 @@
 from .level import LevelScene
 
-first_scene = LevelScene
+
+def first_scene():
+    return LevelScene('test')
