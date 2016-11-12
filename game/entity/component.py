@@ -83,10 +83,8 @@ class Entity(CocosNode, EventDispatcher, metaclass=EntityMeta):
 
     @pos.setter
     def pos(self, newpos):
-        oldpos = self._pos
         self._pos = newpos
-        if newpos != oldpos:
-            self.dispatch_event('on_move', self, newpos)
+        self.dispatch_event('on_move', self, newpos)
 
     @property
     def vel(self):
