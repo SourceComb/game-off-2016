@@ -6,6 +6,8 @@ import pyglet.input
 import pyglet.window.key as K
 
 class J:
+    '''Joystick constants'''
+
     A = 0
     B = 1
     X = 2
@@ -28,6 +30,11 @@ class J:
 
 
 class XInputHandler:
+    '''Mixin enabling use of joysticks the same way as key and mouse events are
+    produced by default.
+
+    Note that it does not automatically detect new controllers.'''
+
     def __init__(self, *joysticks):
         if len(joysticks) == 0:
             joysticks = list(pyglet.input.get_joysticks())
@@ -44,6 +51,10 @@ class XInputHandler:
 
 
 def _getaction(bindings, device1, device2, key=None):
+    '''Utility to find an action. `device2` is optional.
+
+    If `device1` doesn't exist, `device2` will be tried instead. If there is no
+    available binding for this device and action, None will be returned.'''
     if key is None:
         key = device2
         device2 = None
@@ -59,6 +70,48 @@ def _getaction(bindings, device1, device2, key=None):
 
 
 class InputHandler(XInputHandler):
+    '''Mixin providing an input binding system.
+
+    Bindings are defined in the `self.bindings` dict. Keys of this dict are
+    "devices". Individual joystick devices are recognised, as well as the
+    strings `"keyboard"` (for any keyboard input), `"mouse"` (for any mouse
+    input), and `"joystick"` (for any joystick input). Each device's value is
+    another dict, with keys as the input control and values as functions to
+    call.
+
+    Keyboard bindings react to input on all connected keyboards. The keys in
+    these bindings must be constants from `pyglet.window.key` (exported from
+    this module as `K` for convenience). The only parameter passed to these
+    functions is an integer indicating whether or not the key was pressed or
+    released (1 or -1 respectively). Example keyboard bindings:
+
+        self.bindings['keyboard'] = {
+            K.SPACE: lambda s: s > 0 and player.jump()
+        }
+
+    Joystick bindings react to input on one joystick (where a specific joystick
+    reference was given as the device), or on all joysticks (where the string
+    `"joystick"` was given as the device). The keys in these bindings must be
+    constants from the `J` namespace exported from this module. For button
+    bindings, the parameters are the same as for keyboard bindings. For axis
+    bindings, the only parameter passed is the current "value" of this axis -
+    some value between -1 and 1 inclusive (0 is the neutral position for most
+    axes, -1 is neutral for trigger axes). Note that Y axes use -1 for "up",
+    contradicting the convention for the entity and display system. Example
+    joystick bindings:
+
+        self.bindings['joystick'] = {
+            J.A: lambda s: s > 0 and player.jump()
+            J.RSY: lambda val: camera.vel.y = -val
+        }
+
+    TODO: Document mouse bindings
+
+    Note that for reliable operation, ensure you call on_enter and on_exit from
+    your own enter and exit methods. If you are subclassing, remember to call
+    `InputHandler.__init__(self)` from the subclass constructor.
+    '''
+
     def __init__(self):
         XInputHandler.__init__(self)
         self.bindings = {}

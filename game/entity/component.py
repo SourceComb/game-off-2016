@@ -1,3 +1,6 @@
+'''Module containing the Entity type, and mixins useful for defining
+entity behaviour using the Component model.'''
+
 from cocos.cocosnode import CocosNode
 from cocos.euclid import Vector2
 from pyglet.event import EventDispatcher
@@ -26,6 +29,10 @@ def getvec2(x, y=None):
 
 
 class EntityMeta(type):
+    '''Metaclass for entities.
+
+    Allows components to use an `EVENTS` property to declare the events they may
+    emit.'''
     def __init__(cls, name, bases, attrs, **kwargs):
         if 'EVENTS' in attrs:
             for event in cls.EVENTS:
@@ -42,6 +49,12 @@ class EntityMeta(type):
 
 
 class Entity(CocosNode, EventDispatcher, metaclass=EntityMeta):
+    '''Entity super-type.
+
+    All entities have a position and a velocity. When active, the position is
+    automatically updated based on velocity. They emit the `on_move` event
+    when their position changes.'''
+
     EVENTS = ('on_move',)
 
     def __init__(self, pos):
@@ -70,8 +83,10 @@ class Entity(CocosNode, EventDispatcher, metaclass=EntityMeta):
 
     @pos.setter
     def pos(self, newpos):
+        oldpos = self._pos
         self._pos = newpos
-        self.dispatch_event('on_move', self, newpos)
+        if newpos != oldpos:
+            self.dispatch_event('on_move', self, newpos)
 
     @property
     def vel(self):
@@ -83,6 +98,11 @@ class Entity(CocosNode, EventDispatcher, metaclass=EntityMeta):
 
 
 class Spritable:
+    '''The Spritable component indicates that an entity has a sprite.
+
+    This sprite is passed to the constructor. It is automatically added as a
+    child node. Its position is kept in sync with the entity's.'''
+
     def __init__(self, sprite):
         if isinstance(sprite, sheet.Sprite):
             sprite = sprite(self.pos)
@@ -99,6 +119,13 @@ class Spritable:
 
 
 class Killable:
+    '''The Killable component indicates that an entity has health.
+
+    The starting health is passed as an argument to the constructor. The
+    `health` property allows manipulating this entity's health. Events are
+    emitted when the health changes, and when the health decreases to zero
+    ("death"). The `dead` property returns true when this is the case.'''
+
     EVENTS = 'on_heal', 'on_damage', 'on_death'
 
     def __init__(self, start_health, enable_events=True):
@@ -120,7 +147,7 @@ class Killable:
             elif value > oldvalue:  # Restoring health
                 self.dispatch_event('on_heal', self, value - oldvalue)
 
-            if self.dead():
+            if self.dead:
                 self.dispatch_event('on_death', self)
 
     @property

@@ -6,6 +6,8 @@ from ..entity import Player
 
 
 class PlayerLayer(ColorLayer):
+    '''Layer containing an active player.'''
+
     def __init__(self):
         ColorLayer.__init__(self, 255, 255, 255, 255)
 
@@ -15,6 +17,7 @@ class PlayerLayer(ColorLayer):
         self.add(self.player)
 
     def setxvel(self, val, d=None):
+        '''Utility for setting players X velocity from input'''
         vel = val * self.speed
         if d is None:
             self.player.vel.x = vel
@@ -22,6 +25,7 @@ class PlayerLayer(ColorLayer):
             self.player.vel.x += vel * d
 
     def setyvel(self, val, d=None):
+        '''Utility for setting players Y velocity from input'''
         vel = val * self.speed
         if d is None:
             self.player.vel.y = vel
