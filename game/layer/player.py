@@ -1,6 +1,4 @@
-from cocos.euclid import Vector2
 from cocos.layer import ScrollableLayer
-import pyglet.window.key as K
 
 from ..entity import Player
 
@@ -11,7 +9,7 @@ class PlayerLayer(ScrollableLayer):
     def __init__(self, map):
         ScrollableLayer.__init__(self)
 
-        self.speed = 120
+        self.speed = 120 # Horizontal player speed
 
         self.player = Player(map, 0, 0)
         self.add(self.player)
@@ -25,5 +23,6 @@ class PlayerLayer(ScrollableLayer):
             self.player.input_vel.x += vel * d
 
     def setjump(self, d):
+        '''Utility for setting players Y velocity from jump input'''
         if d > 0 and self.player.grounded:
             self.player.vel.y += 64

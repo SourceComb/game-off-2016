@@ -11,6 +11,7 @@ def _get_canvas(arg):
     if isinstance(canvas, str):
         canvas = pyglet.resource.image(canvas)
     if isinstance(canvas, pyglet.image.AbstractImage):
+        # Set nearest scaling, so that up-scaled sprites look nice.
         tex = canvas.get_texture()
         glBindTexture(tex.target, tex.id)
         glTexParameteri(tex.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -87,9 +88,18 @@ class Sprite:
 
 
 class SpritesheetMeta(type):
+    '''Metaclass for all spritesheets. You'll probably want to use `Spritesheet`
+    as an intermediate superclass, rather that directly setting
+    `metaclass=SpritesheetMeta`.
+
+    This allows subclassing effectively, so that subclasses don't clobber the
+    parents `info` when they change theirs. It also allows calculating image
+    information up-front, when the class is created.'''
     @classmethod
     def __prepare__(mcs, name, bases, **kwargs):
+        # Create new info object to prevent clobbering parents.
         info = _SheetInfo()
+        # Extend info from bases
         for base in bases:
             if hasattr(base, 'info'):
                 info.canvas = base.info.canvas
@@ -97,6 +107,7 @@ class SpritesheetMeta(type):
         return { 'info': info }
 
     def __init__(cls, name, bases, attrs, **kwargs):
+        # Calculate images for each sprite up-front.
         cls.info.canvas = _get_canvas(cls.info.canvas)
         for attr in attrs:
             value = getattr(cls, attr)
@@ -107,9 +118,13 @@ class SpritesheetMeta(type):
 
 
 class Spritesheet(metaclass=SpritesheetMeta):
+    '''Super-class for spritesheet definitions. Sets the metaclass to
+    `SpritesheetMeta`.'''
     pass
 
 
+# Something added by Riley for some kind of testing.
+# TODO: Riley - do you still need this?
 if __name__ == '__main__':
     # By Riley
     print('Testing')

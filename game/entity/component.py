@@ -58,13 +58,13 @@ class EntityMeta(type):
 class Entity(CocosNode, EventDispatcher, metaclass=EntityMeta):
     '''Entity super-type.
 
-    All entities have a position and a velocity. When active, the position is
-    automatically updated based on velocity. They emit the `on_move` event
-    when their position changes.'''
+    All entities have a position and size (under the `rect` property), and a
+    velocity. When active, the position is automatically updated based on
+    velocity. They emit the `on_move` event when their position changes.'''
 
     EVENTS = ('on_move',)
 
-    def __init__(self, pos, size):
+    def __init__(self, pos, size=(0, 0)):
         CocosNode.__init__(self)
 
         self._rect = Rect(*pos, *size)
@@ -79,9 +79,12 @@ class Entity(CocosNode, EventDispatcher, metaclass=EntityMeta):
         super().on_exit()
 
     def tick(self, dt):
+        '''Perform necessary update operations.'''
         self._apply_velocity(dt)
 
     def _apply_velocity(self, dt):
+        '''Naïve velocity calculation implementation. Does not account for any
+        collisions; use *Collidable components to make these considerations.'''
         self.pos += self._vel * dt
 
     @property
@@ -139,16 +142,15 @@ class Spritable:
             sprite = sprite(self.pos)
         else:
             sprite.position = self.center
-
+        # Ensure the entity rect size is correct
         self.size = sprite.width, sprite.height
-
+        # Add the sprite as a subnode
         self._Spritable_sprite = sprite
         self.add(sprite)
-
-        self.push_handlers(on_move=self._Spritable_setpos)
-
-    def _Spritable_setpos(self, _, pos):
-        self._Spritable_sprite.position = self.center
+        # Update sprite position when the entity moves
+        def setpos(_, pos):
+            self._Spritable_sprite.position = self.center
+        self.push_handlers(on_move=setpos)
 
 
 class Killable:
@@ -193,7 +195,9 @@ class MapCollidable:
     the map.
 
     It stores the map collider and the map to collide with, and accounts for the
-    map by overriding the per-tick movement code.'''
+    map by overriding the per-tick movement code. The `grounded` property is
+    made available for checking whether or not this entity is touching the
+    ground.'''
 
     EVENTS = ('on_map_connect',)
 
@@ -218,20 +222,23 @@ class MapCollidable:
         '''Account for map when applying velocity'''
         old = self.rect
         vel = self.vel
+        # Calculate main changes
         disp = vel * dt
-
         new = old.copy()
         new.x += disp.x
         new.y += disp.y
-
+        # Account for collisions
+        # Modifies `new` and returns an updated velocity
+        # that takes collisions into account
         newvel = self._MapCollidable_collider.collide_map(
             self._MapCollidable_map,
             old, new, vel.x, vel.y
         )
         self.vel = newvel
-
+        # Update self with new position
         self.rect = new
 
+        # Unset any connections that no longer apply
         connected = self._MapCollidable_connected
         if connected['up'] and vel.y < 0:
             # Moved down so no longer connected
@@ -248,8 +255,7 @@ class MapCollidable:
 
 
 class _CustomMapCollider(RectMapWithPropsCollider):
-    '''Custom MapCollider to dispatch events to a
-    MapCollidable entity'''
+    '''Custom MapCollider to dispatch events to a MapCollidable entity.'''
 
     def __init__(self, entity, *args):
         super().__init__(*args)
@@ -277,7 +283,10 @@ class _CustomMapCollider(RectMapWithPropsCollider):
 _a_g = Vector2(0.0, -33.684210526)
 class Droppable:
     '''The Droppable component indicates that an entity should be affected by
-    gravity.'''
+    gravity.
+
+    If `self.grounded` exists, it will be checked and gravity disabled when it
+    is true. This allows seamless cooperation with MapCollidable.'''
     def __init__(self):
         self.schedule(self._Droppable_apply_gravity)
 

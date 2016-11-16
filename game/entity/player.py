@@ -5,7 +5,7 @@ from ..sprite.test import StickSprite
 
 class Player(Entity, Spritable, MapCollidable, Droppable):
     def __init__(self, map, x, y):
-        Entity.__init__(self, (x, y), (32, 32))
+        Entity.__init__(self, (x, y))
         Spritable.__init__(self, StickSprite.idle)
         MapCollidable.__init__(self, map, 'slide')
         Droppable.__init__(self)
