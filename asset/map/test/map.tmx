@@ -59,7 +59,11 @@
 </data>
  </layer>
  <objectgroup name="spawns">
-  <object id="4" name="spawn" type="player_spawn" x="271" y="366.5"/>
+  <object id="4" name="spawn" type="player_spawn" x="271" y="366.5">
+   <properties>
+    <property name="spawn_type" value="player"/>
+   </properties>
+  </object>
   <object id="7" name="enemy1" type="enemy_spawn" x="510" y="257"/>
  </objectgroup>
 </map>

@@ -23,10 +23,32 @@ class LevelScene(Scene, InputHandler):
     is_event_handler = True
 
     def __init__(self, lvlname):
-        player = PlayerLayer()
         mgr = ScrollingManager()
-        Scene.__init__(self, player, mgr)
+        Scene.__init__(self, mgr)
         InputHandler.__init__(self)
+
+        level = load_map(lvlname)
+        for tile in level['test_tiles'].values():
+            tex = tile.image.get_texture()
+            glBindTexture(tex.target, tex.id)
+            glTexParameteri(tex.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+
+        self.campos = Vector2(330, 380)
+        self.camvel = Vector2(0, 0)
+        self.mgr = mgr
+
+        mgr.scale = 1.0
+        mgr.add(level['topology'])
+        mgr.set_focus(*self.campos)
+
+        spawns = level['spawns']
+
+        player = PlayerLayer()
+        mgr.add(player)
+        playerspawn = spawns.match(spawn_type='player')[0]
+        player.player.pos = playerspawn.center
+
+        self.schedule(self.tick)
 
         self.bindings['keyboard'] = keybinds = {}
         keybinds.update({
@@ -55,22 +77,6 @@ class LevelScene(Scene, InputHandler):
             J.RSX: self.updatecamx,
             J.RSY: self.updatecamy
         })
-
-        level = load_map(lvlname)
-        for tile in level['test_tiles'].values():
-            tex = tile.image.get_texture()
-            glBindTexture(tex.target, tex.id)
-            glTexParameteri(tex.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-
-        self.campos = Vector2(330, 380)
-        self.camvel = Vector2(0, 0)
-        self.mgr = mgr
-
-        mgr.scale = 1.0
-        mgr.add(level['topology'])
-        mgr.set_focus(0, 0)
-
-        self.schedule(self.tick)
 
     def updatecamx(self, value):
         self.camvel.x = value

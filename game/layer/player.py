@@ -1,15 +1,15 @@
 from cocos.euclid import Vector2
-from cocos.layer import ColorLayer
+from cocos.layer import ScrollableLayer
 import pyglet.window.key as K
 
 from ..entity import Player
 
 
-class PlayerLayer(ColorLayer):
+class PlayerLayer(ScrollableLayer):
     '''Layer containing an active player.'''
 
     def __init__(self):
-        ColorLayer.__init__(self, 255, 255, 255, 255)
+        ScrollableLayer.__init__(self)
 
         self.speed = 120
 
