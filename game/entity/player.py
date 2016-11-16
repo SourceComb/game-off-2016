@@ -1,3 +1,4 @@
+from cocos.euclid import Vector2
 from .component import Entity, MapCollidable, Spritable
 from ..sprite.test import StickSprite
 
@@ -8,4 +9,8 @@ class Player(Entity, Spritable, MapCollidable):
         Spritable.__init__(self, StickSprite.idle)
         MapCollidable.__init__(self, map, 'slide')
 
-    _apply_velocity = MapCollidable._apply_velocity
+        self.input_vel = Vector2(0, 0)
+
+    def _apply_velocity(self, dt):
+        self.vel = self.input_vel
+        MapCollidable._apply_velocity(self, dt)
