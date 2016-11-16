@@ -13,7 +13,7 @@ class PlayerLayer(ScrollableLayer):
 
         self.speed = 120
 
-        self.player = Player(map, 100, 100)
+        self.player = Player(map, 0, 0)
         self.add(self.player)
 
     def setxvel(self, val, d=None):

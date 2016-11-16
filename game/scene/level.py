@@ -49,7 +49,7 @@ class LevelScene(Scene, InputHandler):
         self.player = player.player
         mgr.add(player)
         playerspawn = spawns.match(spawn_type='player')[0]
-        self.player.pos = playerspawn.center
+        self.player.center = playerspawn.center
 
         self.schedule(self.tick)
 
