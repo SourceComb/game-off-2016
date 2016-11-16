@@ -54,8 +54,7 @@ class Sprite:
     def toimg(self, canvas, i):
         return canvas.get_region(
             self.pos[0] + self.size[0]*i, self.pos[1],
-            # Fix an off-by-one issue
-            self.size[0] - 1, self.size[1] - 1
+            self.size[0], self.size[1]
         )
 
     def toanim(self, canvas):
