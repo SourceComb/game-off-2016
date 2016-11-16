@@ -279,8 +279,8 @@ class _CustomMapCollider(RectMapWithPropsCollider):
 
 
 # Accel due to grav, in px/s/s
-# Calculated from 64/1.9 (ratio of px/m, based on viking sprite)
-_a_g = Vector2(0.0, -33.684210526)
+# Calculated from approximately 9.81 * 64/1.9 (ratio of px/m, based on viking sprite)
+_a_g = Vector2(0.0, -300)
 class Droppable:
     '''The Droppable component indicates that an entity should be affected by
     gravity.

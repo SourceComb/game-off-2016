@@ -42,20 +42,20 @@ class LevelScene(Scene, InputHandler):
         lvlmap = level['tiles']
 
         # Set info for use in camera controls
-        self.campos = Vector2(0, 0)
+        self.cam_pos = Vector2(0, 0)
         self.camvel = Vector2(0, 0)
         self.mgr = mgr
         # Set up scroll manager
         mgr.scale = 1.0
         mgr.add(lvlmap)
-        mgr.set_focus(*self.campos)
+        mgr.set_focus(*self.cam_pos)
 
         # Spawn entities based on locations set in map
         spawns = level['spawns']
         # Spawn player
-        player = PlayerLayer(lvlmap)
-        self.player = player.player
-        mgr.add(player)
+        player_layer = PlayerLayer(lvlmap)
+        self.player = player_layer.player
+        mgr.add(player_layer)
         playerspawn = spawns.match(spawn_type='player')[0]
         self.player.center = playerspawn.center
 
@@ -69,9 +69,9 @@ class LevelScene(Scene, InputHandler):
         self.bindings['keyboard'] = keybinds = {}
         # Basic binds
         keybinds.update({
-            K.UP: player.setjump,
-            K.LEFT: lambda d: player.setxvel(-1, d),
-            K.RIGHT: lambda d: player.setxvel(1, d),
+            K.UP: player_layer.setjump,
+            K.LEFT: lambda d: player_layer.setxvel(-1, d),
+            K.RIGHT: lambda d: player_layer.setxvel(1, d),
         })
         # Extra binds
         keybinds.update({
@@ -88,8 +88,8 @@ class LevelScene(Scene, InputHandler):
         # Joystick bindings
         self.bindings['joystick'] = {}
         self.bindings['joystick'].update({
-            J.A: player.setjump,
-            J.LSX: player.setxvel,
+            J.A: player_layer.setjump,
+            J.LSX: player_layer.setxvel,
 
             J.RSX: updatecamx,
             J.RSY: updatecamy
@@ -100,10 +100,10 @@ class LevelScene(Scene, InputHandler):
 
     def tick(self, dt):
         '''Update camera'''
-        self.campos += self.camvel * dt * 60
-        playerpos = self.player.center
-        self.mgr.force_focus(playerpos[0] + self.campos.x,
-                             playerpos[1] + self.campos.y)
+        self.cam_pos += self.camvel * dt * 60
+        player_pos = self.player.center
+        self.mgr.force_focus(player_pos[0] + self.cam_pos.x,
+                             player_pos[1] + self.cam_pos.y)
 
     def on_enter(self):
         Scene.on_enter(self)

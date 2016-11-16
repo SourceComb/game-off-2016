@@ -25,4 +25,4 @@ class PlayerLayer(ScrollableLayer):
     def setjump(self, d):
         '''Utility for setting players Y velocity from jump input'''
         if d > 0 and self.player.grounded:
-            self.player.vel.y += 64
+            self.player.vel.y += 128

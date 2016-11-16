@@ -121,14 +121,3 @@ class Spritesheet(metaclass=SpritesheetMeta):
     '''Super-class for spritesheet definitions. Sets the metaclass to
     `SpritesheetMeta`.'''
     pass
-
-
-# Something added by Riley for some kind of testing.
-# TODO: Riley - do you still need this?
-if __name__ == '__main__':
-    # By Riley
-    print('Testing')
-    print(hasattr(_SheetInfo, '__dict__'))
-    a = _SheetDefaults()
-    print(hasattr(a, '__dict__'))
-    print(_SheetInfo.__bases__)
