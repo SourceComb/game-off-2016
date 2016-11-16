@@ -4,66 +4,84 @@
   <image source="test_tiles.png" width="256" height="256"/>
   <tile id="48">
    <properties>
-    <property name="collides" value="___R"/>
+    <property name="down" type="bool" value="false"/>
+    <property name="left" type="bool" value="false"/>
+    <property name="right" type="bool" value="true"/>
+    <property name="up" type="bool" value="false"/>
    </properties>
   </tile>
   <tile id="49">
    <properties>
-    <property name="collides" value="_D__"/>
+    <property name="down" type="bool" value="true"/>
+    <property name="left" type="bool" value="false"/>
+    <property name="right" type="bool" value="false"/>
+    <property name="up" type="bool" value="false"/>
    </properties>
   </tile>
   <tile id="50">
    <properties>
-    <property name="collides" value="UDLR"/>
     <property name="damage" type="int" value="4"/>
+    <property name="down" type="bool" value="true"/>
+    <property name="left" type="bool" value="true"/>
+    <property name="right" type="bool" value="true"/>
+    <property name="up" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="56">
    <properties>
-    <property name="collides" value="U___"/>
+    <property name="down" type="bool" value="false"/>
+    <property name="left" type="bool" value="false"/>
+    <property name="right" type="bool" value="false"/>
+    <property name="up" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="57">
    <properties>
-    <property name="collides" value="__L_"/>
+    <property name="down" type="bool" value="false"/>
+    <property name="left" type="bool" value="true"/>
+    <property name="right" type="bool" value="false"/>
+    <property name="up" type="bool" value="false"/>
    </properties>
   </tile>
   <tile id="58">
    <properties>
-    <property name="collides" value="UDLR"/>
+    <property name="down" type="bool" value="true"/>
+    <property name="left" type="bool" value="true"/>
+    <property name="right" type="bool" value="true"/>
+    <property name="up" type="bool" value="true"/>
    </properties>
   </tile>
  </tileset>
  <layer name="topology" width="20" height="20">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,50,50,0,0,0,
-0,51,0,0,0,0,0,50,50,50,50,50,0,0,49,59,59,58,0,0,
-0,0,0,0,0,0,49,0,0,0,0,0,58,0,49,59,59,58,0,0,
-0,0,0,0,0,0,49,0,0,0,0,0,58,0,0,57,57,0,0,0,
-0,0,0,0,0,0,0,57,57,57,57,57,0,0,0,0,0,0,0,0,
+0,51,0,0,0,0,0,0,0,0,0,0,0,0,49,59,59,58,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,49,59,59,58,0,0,
+0,0,0,0,0,0,50,50,50,50,50,0,0,0,0,57,57,0,0,0,
+0,0,0,0,0,49,0,0,0,0,0,58,0,0,0,0,0,0,0,0,
+0,0,0,0,0,49,0,0,0,0,0,58,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,57,57,57,57,57,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,59,51,51,59,59,59,59,59,0,0,0,0,0,0,0,0,
-0,0,0,0,0,59,59,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,59,59,59,51,51,51,59,59,59,59,59,0,0,0,0,0,0,0,0,
+0,0,0,0,59,59,59,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,59,59,59,59,59,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,51,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,51,0,0,0,
-0,0,0,0,0,0,0,59,59,59,59,59,59,59,59,59,59,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,51,51,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,51,0,0,0,
+0,51,51,0,0,0,0,59,59,59,59,59,59,59,59,59,59,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
  <objectgroup name="spawns">
-  <object id="4" name="spawn" type="player_spawn" x="271" y="366.5">
+  <object id="4" name="spawn" type="player_spawn" x="271" y="528.5">
    <properties>
     <property name="spawn_type" value="player"/>
    </properties>
   </object>
-  <object id="7" name="enemy1" type="enemy_spawn" x="510" y="257"/>
+  <object id="7" name="enemy1" type="enemy_spawn" x="495" y="399"/>
  </objectgroup>
 </map>

@@ -33,7 +33,7 @@ class LevelScene(Scene, InputHandler):
             glBindTexture(tex.target, tex.id)
             glTexParameteri(tex.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
-        self.campos = Vector2(330, 380)
+        self.campos = Vector2(0, 0)
         self.camvel = Vector2(0, 0)
         self.mgr = mgr
 
@@ -44,9 +44,10 @@ class LevelScene(Scene, InputHandler):
         spawns = level['spawns']
 
         player = PlayerLayer()
+        self.player = player.player
         mgr.add(player)
         playerspawn = spawns.match(spawn_type='player')[0]
-        player.player.pos = playerspawn.center
+        self.player.pos = playerspawn.center
 
         self.schedule(self.tick)
 
@@ -86,7 +87,9 @@ class LevelScene(Scene, InputHandler):
 
     def tick(self, dt):
         self.campos += self.camvel * dt * 60
-        self.mgr.force_focus(self.campos.x, self.campos.y)
+        playerpos = self.player.pos
+        self.mgr.force_focus(playerpos[0] + self.campos.x,
+                             playerpos[1] + self.campos.y)
 
     def on_enter(self):
         Scene.on_enter(self)
