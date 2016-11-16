@@ -55,27 +55,26 @@ class LevelScene(Scene, InputHandler):
 
         self.bindings['keyboard'] = keybinds = {}
         keybinds.update({
-            K.UP: lambda d: player.setyvel(1, d),
-            K.DOWN: lambda d: player.setyvel(-1, d),
+            K.UP: player.setjump,
             K.LEFT: lambda d: player.setxvel(-1, d),
             K.RIGHT: lambda d: player.setxvel(1, d),
         })
         keybinds.update({
+            K.SPACE: keybinds[K.UP],
+
             K.W: keybinds[K.UP],
             K.A: keybinds[K.LEFT],
-            K.S: keybinds[K.DOWN],
             K.D: keybinds[K.RIGHT],
 
             K.H: keybinds[K.LEFT],
-            K.J: keybinds[K.DOWN],
             K.K: keybinds[K.UP],
             K.L: keybinds[K.RIGHT],
         })
 
         self.bindings['joystick'] = {}
         self.bindings['joystick'].update({
+            J.A: player.setjump,
             J.LSX: player.setxvel,
-            J.LSY: lambda val: player.setyvel(-val),
 
             J.RSX: self.updatecamx,
             J.RSY: self.updatecamy

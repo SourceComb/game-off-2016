@@ -163,7 +163,7 @@ class InputHandler(XInputHandler):
             action(1)
             return True
 
-    def on_joybutton_press(self, joy, button):
+    def on_joybutton_release(self, joy, button):
         action = _getaction(self.bindings, joy, 'joystick', button)
         if action is not None:
             action(-1)

@@ -210,6 +210,10 @@ class MapCollidable:
             self._MapCollidable_connected[direction] = True
         self.push_handlers(on_map_connect=on_connect)
 
+    @property
+    def grounded(self):
+        return self._MapCollidable_connected['down']
+
     def _apply_velocity(self, dt):
         '''Account for map when applying velocity'''
         old = self.rect
@@ -266,3 +270,18 @@ class _CustomMapCollider(RectMapWithPropsCollider):
     def collide_top(self, obj):
         '''Top of entity collided with bottom of obj'''
         self.entity.dispatch_event('on_map_connect', self.entity, 'up', obj)
+
+
+# Accel due to grav, in px/s/s
+# Calculated from 64/1.9 (ratio of px/m, based on viking sprite)
+_a_g = Vector2(0.0, -33.684210526)
+class Droppable:
+    '''The Droppable component indicates that an entity should be affected by
+    gravity.'''
+    def __init__(self):
+        self.schedule(self._Droppable_apply_gravity)
+
+    def _Droppable_apply_gravity(self, dt):
+        if not (hasattr(self, 'grounded') and self.grounded):
+            # Not marked as grounded - apply gravity
+            self.vel += _a_g * dt
