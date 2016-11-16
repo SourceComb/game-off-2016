@@ -4,51 +4,51 @@
   <image source="test_tiles.png" width="256" height="256"/>
   <tile id="48">
    <properties>
-    <property name="bottom" type="bool" value="false"/>
-    <property name="left" type="bool" value="false"/>
-    <property name="right" type="bool" value="true"/>
-    <property name="top" type="bool" value="false"/>
+    <property name="bottom" type="int" value="0"/>
+    <property name="left" type="int" value="0"/>
+    <property name="right" type="int" value="1"/>
+    <property name="top" type="int" value="0"/>
    </properties>
   </tile>
   <tile id="49">
    <properties>
-    <property name="bottom" type="bool" value="false"/>
-    <property name="left" type="bool" value="false"/>
-    <property name="right" type="bool" value="false"/>
-    <property name="top" type="bool" value="true"/>
+    <property name="bottom" type="int" value="1"/>
+    <property name="left" type="int" value="0"/>
+    <property name="right" type="int" value="0"/>
+    <property name="top" type="int" value="0"/>
    </properties>
   </tile>
   <tile id="50">
    <properties>
-    <property name="bottom" type="bool" value="true"/>
+    <property name="bottom" type="int" value="1"/>
     <property name="damage" type="int" value="4"/>
-    <property name="left" type="bool" value="true"/>
-    <property name="right" type="bool" value="true"/>
-    <property name="top" type="bool" value="true"/>
+    <property name="left" type="int" value="1"/>
+    <property name="right" type="int" value="1"/>
+    <property name="top" type="int" value="1"/>
    </properties>
   </tile>
   <tile id="56">
    <properties>
-    <property name="bottom" type="bool" value="true"/>
-    <property name="left" type="bool" value="false"/>
-    <property name="right" type="bool" value="false"/>
-    <property name="top" type="bool" value="false"/>
+    <property name="bottom" type="int" value="0"/>
+    <property name="left" type="int" value="0"/>
+    <property name="right" type="int" value="0"/>
+    <property name="top" type="int" value="1"/>
    </properties>
   </tile>
   <tile id="57">
    <properties>
-    <property name="bottom" type="bool" value="false"/>
-    <property name="left" type="bool" value="true"/>
-    <property name="right" type="bool" value="false"/>
-    <property name="top" type="bool" value="false"/>
+    <property name="bottom" type="int" value="0"/>
+    <property name="left" type="int" value="1"/>
+    <property name="right" type="int" value="0"/>
+    <property name="top" type="int" value="0"/>
    </properties>
   </tile>
   <tile id="58">
    <properties>
-    <property name="bottom" type="bool" value="true"/>
-    <property name="left" type="bool" value="true"/>
-    <property name="right" type="bool" value="true"/>
-    <property name="top" type="bool" value="true"/>
+    <property name="bottom" type="int" value="1"/>
+    <property name="left" type="int" value="1"/>
+    <property name="right" type="int" value="1"/>
+    <property name="top" type="int" value="1"/>
    </properties>
   </tile>
  </tileset>

@@ -206,9 +206,8 @@ class MapCollidable:
             'left': False, 'right': False
         }
 
-        def on_connect(self, direction):
+        def on_connect(self, direction, obj):
             self._MapCollidable_connected[direction] = True
-            print('connected', direction)
         self.push_handlers(on_map_connect=on_connect)
 
     def _apply_velocity(self, dt):
@@ -254,16 +253,16 @@ class _CustomMapCollider(RectMapWithPropsCollider):
 
     def collide_bottom(self, obj):
         '''Bottom of entity collided with top of obj'''
-        self.entity.dispatch_event('on_map_connect', self.entity, 'down')
+        self.entity.dispatch_event('on_map_connect', self.entity, 'down', obj)
 
     def collide_left(self, obj):
         '''Left of entity collided with right of obj'''
-        self.entity.dispatch_event('on_map_connect', self.entity, 'left')
+        self.entity.dispatch_event('on_map_connect', self.entity, 'left', obj)
 
     def collide_right(self, obj):
         '''Right of entity collided with left of obj'''
-        self.entity.dispatch_event('on_map_connect', self.entity, 'right')
+        self.entity.dispatch_event('on_map_connect', self.entity, 'right', obj)
 
     def collide_top(self, obj):
         '''Top of entity collided with bottom of obj'''
-        self.entity.dispatch_event('on_map_connect', self.entity, 'up')
+        self.entity.dispatch_event('on_map_connect', self.entity, 'up', obj)
