@@ -6,5 +6,5 @@ class TestSheet(Spritesheet):
 
 
 class StickSprite(TestSheet):
-    idle = Sprite(pos=(0, 0), size=(64, 128), frames=4)
+    idle = Sprite(pos=(256, 448), size=(64, 64), frames=1)
     run = Sprite(pos=(0, 256), size=(64, 128), frames=4)
