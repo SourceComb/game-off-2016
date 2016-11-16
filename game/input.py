@@ -112,9 +112,10 @@ class InputHandler(XInputHandler):
     `InputHandler.__init__(self)` from the subclass constructor.
     '''
 
-    def __init__(self):
+    def __init__(self, joy_inner_deadzone=0.05):
         XInputHandler.__init__(self)
         self.bindings = {}
+        self.innerdead = joy_inner_deadzone
 
     def on_enter(self):
         if not isinstance(self, Layer):
@@ -171,5 +172,7 @@ class InputHandler(XInputHandler):
     def on_joyaxis_motion(self, joy, axis, value):
         action = _getaction(self.bindings, joy, 'joystick', axis)
         if action is not None:
+            if -self.innerdead <= value <= self.innerdead:
+                value = 0
             action(value)
             return True
