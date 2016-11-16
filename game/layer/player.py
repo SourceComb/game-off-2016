@@ -19,15 +19,15 @@ class PlayerLayer(ScrollableLayer):
     def setxvel(self, val, d=None):
         '''Utility for setting players X velocity from input'''
         vel = val * self.speed
-        if d is None:
+        if d is None or d > 0:
             self.player.vel.x = vel
         else:
-            self.player.vel.x += vel * d
+            self.player.vel.x = 0
 
     def setyvel(self, val, d=None):
         '''Utility for setting players Y velocity from input'''
         vel = val * self.speed
-        if d is None:
+        if d is None or d > 0:
             self.player.vel.y = vel
         else:
-            self.player.vel.y += vel * d
+            self.player.vel.y = 0
