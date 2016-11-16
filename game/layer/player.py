@@ -8,12 +8,12 @@ from ..entity import Player
 class PlayerLayer(ScrollableLayer):
     '''Layer containing an active player.'''
 
-    def __init__(self):
+    def __init__(self, map):
         ScrollableLayer.__init__(self)
 
         self.speed = 120
 
-        self.player = Player(100, 100)
+        self.player = Player(map, 100, 100)
         self.add(self.player)
 
     def setxvel(self, val, d=None):
