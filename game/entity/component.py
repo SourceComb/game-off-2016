@@ -240,16 +240,16 @@ class MapCollidable:
 
         # Unset any connections that no longer apply
         connected = self._MapCollidable_connected
-        if connected['up'] and vel.y < 0:
+        if connected['up'] and self.vel.y:
             # Moved down so no longer connected
             connected['up'] = False
-        if connected['down'] and vel.y > 0:
+        if connected['down'] and self.vel.y:
             # Moved up so no longer connected
             connected['down'] = False
-        if connected['left'] and vel.x > 0:
+        if connected['left'] and self.vel.x:
             # Moved right so no longer connected
             connected['left'] = False
-        if connected['right'] and vel.x < 0:
+        if connected['right'] and self.vel.x:
             # Moved left so no longer connected
             connected['right'] = False
 
@@ -279,7 +279,8 @@ class _CustomMapCollider(RectMapWithPropsCollider):
 
 
 # Accel due to grav, in px/s/s
-# Calculated from approximately 9.81 * 64/1.9 (ratio of px/m, based on viking sprite)
+# Calculated from approximately 9.81 * 64/1.9
+# (ratio of px/m, based on viking sprite)
 _a_g = Vector2(0.0, -300)
 class Droppable:
     '''The Droppable component indicates that an entity should be affected by
@@ -291,6 +292,4 @@ class Droppable:
         self.schedule(self._Droppable_apply_gravity)
 
     def _Droppable_apply_gravity(self, dt):
-        if not (hasattr(self, 'grounded') and self.grounded):
-            # Not marked as grounded - apply gravity
-            self.vel += _a_g * dt
+        self.vel += _a_g * dt
