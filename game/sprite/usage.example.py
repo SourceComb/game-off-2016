@@ -1,4 +1,4 @@
-from .sheet import *
+from sheet import *
 
 
 class MainSheet(Spritesheet):
