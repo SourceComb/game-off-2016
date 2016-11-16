@@ -1,6 +1,11 @@
 from cocos.layer import ScrollableLayer
 
 from ..entity import Player
+from ..unit import mtr
+
+
+_hspeed = 3 * mtr
+_vspeed = 4 * mtr
 
 
 class PlayerLayer(ScrollableLayer):
@@ -9,14 +14,12 @@ class PlayerLayer(ScrollableLayer):
     def __init__(self, map):
         ScrollableLayer.__init__(self)
 
-        self.speed = 120 # Horizontal player speed
-
         self.player = Player(map, 0, 0)
         self.add(self.player)
 
     def setxvel(self, val, d=None):
         '''Utility for setting players X velocity from input'''
-        vel = val * self.speed
+        vel = val * _hspeed
         if d is None:
             self.player.input_vel.x = vel
         else:
@@ -25,4 +28,4 @@ class PlayerLayer(ScrollableLayer):
     def setjump(self, d):
         '''Utility for setting players Y velocity from jump input'''
         if d > 0 and self.player.grounded:
-            self.player.vel.y += 128
+            self.player.vel.y += _vspeed

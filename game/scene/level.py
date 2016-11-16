@@ -8,6 +8,7 @@ import pyglet.resource
 
 from ..input import InputHandler, J, K
 from ..layer.player import PlayerLayer
+from ..unit import mtr
 
 
 def load_map(mapname):
@@ -100,7 +101,7 @@ class LevelScene(Scene, InputHandler):
 
     def tick(self, dt):
         '''Update camera'''
-        self.cam_pos += self.camvel * dt * 60
+        self.cam_pos += self.camvel * dt * 8 * mtr
         player_pos = self.player.center
         self.mgr.force_focus(player_pos[0] + self.cam_pos.x,
                              player_pos[1] + self.cam_pos.y)

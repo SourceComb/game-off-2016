@@ -9,6 +9,7 @@ from cocos.rect import Rect
 from pyglet.event import EventDispatcher
 
 from ..sprite import sheet
+from ..unit import mtr
 
 
 def getvec2(x, y=None):
@@ -279,9 +280,7 @@ class _CustomMapCollider(RectMapWithPropsCollider):
 
 
 # Accel due to grav, in px/s/s
-# Calculated from approximately 9.81 * 64/1.9
-# (ratio of px/m, based on viking sprite)
-_a_g = Vector2(0.0, -300)
+_a_g = Vector2(0.0, -9.8) * mtr
 class Droppable:
     '''The Droppable component indicates that an entity should be affected by
     gravity.
