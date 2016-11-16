@@ -1,5 +1,7 @@
 import cocos.sprite
 import pyglet.image
+from pyglet.gl import GL_NEAREST, GL_TEXTURE_MAG_FILTER, \
+    glBindTexture, glTexParameteri
 import pyglet.resource
 
 
@@ -9,6 +11,9 @@ def _get_canvas(arg):
     if isinstance(canvas, str):
         canvas = pyglet.resource.image(canvas)
     if isinstance(canvas, pyglet.image.AbstractImage):
+        tex = canvas.get_texture()
+        glBindTexture(tex.target, tex.id)
+        glTexParameteri(tex.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
         return canvas
     else:
         raise ValueError('Could not create canvas from ' + repr(arg))
@@ -104,6 +109,7 @@ class SpritesheetMeta(type):
 
 class Spritesheet(metaclass=SpritesheetMeta):
     pass
+
 
 if __name__ == '__main__':
     # By Riley

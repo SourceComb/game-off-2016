@@ -2,6 +2,8 @@ from cocos.euclid import Vector2
 from cocos.layer.scrolling import ScrollingManager
 from cocos.scene import Scene
 from cocos.tiles import load_tmx
+from pyglet.gl import GL_NEAREST, GL_TEXTURE_MAG_FILTER, \
+    glBindTexture, glTexParameteri
 import pyglet.resource
 
 from ..input import InputHandler, J, K
@@ -22,11 +24,7 @@ class LevelScene(Scene, InputHandler):
 
     def __init__(self, lvlname):
         player = PlayerLayer()
-        level = load_map(lvlname)
-        m = level['topology']
         mgr = ScrollingManager()
-        mgr.add(m)
-        mgr.set_focus(0, 0)
         Scene.__init__(self, player, mgr)
         InputHandler.__init__(self)
 
@@ -58,9 +56,19 @@ class LevelScene(Scene, InputHandler):
             J.RSY: self.updatecamy
         })
 
+        level = load_map(lvlname)
+        for tile in level['test_tiles'].values():
+            tex = tile.image.get_texture()
+            glBindTexture(tex.target, tex.id)
+            glTexParameteri(tex.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+
         self.campos = Vector2(330, 380)
         self.camvel = Vector2(0, 0)
         self.mgr = mgr
+
+        mgr.scale = 1.0
+        mgr.add(level['topology'])
+        mgr.set_focus(0, 0)
 
         self.schedule(self.tick)
 
