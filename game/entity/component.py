@@ -63,13 +63,15 @@ class Entity(CocosNode, EventDispatcher, metaclass=EntityMeta):
     velocity. When active, the position is automatically updated based on
     velocity. They emit the `on_move` event when their position changes.'''
 
-    EVENTS = ('on_move',)
+    EVENTS = 'on_move', 'on_accelerate'
 
     def __init__(self, pos, size=(0, 0)):
         CocosNode.__init__(self)
 
         self._rect = Rect(*pos, *size)
         self._vel = Vector2(0.0, 0.0)
+
+        self.push_handlers(self)
 
     def on_enter(self):
         self.schedule(self.tick)
@@ -125,11 +127,16 @@ class Entity(CocosNode, EventDispatcher, metaclass=EntityMeta):
 
     @property
     def vel(self):
-        return self._vel
+        return self._vel.copy()
 
     @vel.setter
     def vel(self, value):
-        self._vel = getvec2(value)
+        oldvel = self.vel
+        newvel = getvec2(value)
+        self._vel = newvel
+        # Emit event
+        if oldvel != newvel:
+            self.dispatch_event('on_accelerate', self, newvel - oldvel)
 
 
 class Spritable:
@@ -139,19 +146,32 @@ class Spritable:
     child node. Its position is kept in sync with the entity's.'''
 
     def __init__(self, sprite):
-        if isinstance(sprite, sheet.Sprite):
-            sprite = sprite(self.pos)
-        else:
-            sprite.position = self.center
-        # Ensure the entity rect size is correct
-        self.size = sprite.width, sprite.height
-        # Add the sprite as a subnode
-        self._Spritable_sprite = sprite
-        self.add(sprite)
+        self._Spritable_sprite = None
+        self.sprite = sprite
         # Update sprite position when the entity moves
         def setpos(_, pos):
             self._Spritable_sprite.position = self.center
         self.push_handlers(on_move=setpos)
+
+    @property
+    def sprite(self):
+        return self._Spritable_sprite
+
+    @sprite.setter
+    def sprite(self, new):
+        if isinstance(new, sheet.Sprite):
+            new = new(self.pos)
+        else:
+            new.position = self.center
+        # Ensure rect size matches sprite
+        self.size = new.width, new.height
+        # Set sprite on self
+        old = self._Spritable_sprite
+        self._Spritable_sprite = new
+        # Set sprite as child node
+        if old is not None:
+            self.remove(old)
+        self.add(new)
 
 
 class Killable:

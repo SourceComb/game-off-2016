@@ -11,7 +11,21 @@ class Player(Entity, Spritable, MapCollidable, Droppable):
         Droppable.__init__(self)
 
         self.input_vel = Vector2(0, 0)
+        self.facing = 'right'
 
     def _apply_velocity(self, dt):
-        self.vel.x = self.input_vel.x
+        vel = self.vel
+        vel.x = self.input_vel.x
+        self.vel = vel
         MapCollidable._apply_velocity(self, dt)
+
+    def on_accelerate(self, _, change):
+        if change.x:
+            if self.vel.x > 0:
+                self.facing = 'right'
+                self.sprite = PlayerSprite.run_right
+            elif self.vel.x < 0:
+                self.facing = 'left'
+                self.sprite = PlayerSprite.run_left
+            else:
+                self.sprite = getattr(PlayerSprite, 'idle_' + self.facing)

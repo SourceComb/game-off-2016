@@ -1,3 +1,4 @@
+from cocos.euclid import Vector2
 from cocos.layer import ScrollableLayer
 
 from ..entity import Player
@@ -28,4 +29,4 @@ class PlayerLayer(ScrollableLayer):
     def setjump(self, d):
         '''Utility for setting players Y velocity from jump input'''
         if d > 0 and self.player.grounded:
-            self.player.vel.y += _vspeed
+            self.player.vel += Vector2(0.0, _vspeed)
