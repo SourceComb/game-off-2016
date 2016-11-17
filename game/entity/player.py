@@ -62,11 +62,11 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable):
             self.health -= dmg
             # Calculate knockback
             knockback = dmg * mtr
-            if direction == 'right':
-                knockback = -knockback
             knockback = Vector2(
-                knockback if direction in ('left', 'right') else 0.0,
-                abs(knockback)
+                -knockback if direction == 'right' else \
+                    knockback if direction == 'left' else \
+                    -self.vel.x,
+                knockback
             )
             # Apply knockback on next tick
             def apply_knockback(dt):
