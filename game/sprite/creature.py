@@ -20,6 +20,3 @@ class PlayerSprite(CreatureSheet):
                            frames=4, rate=10, repeat=False)
     jump_left =     Sprite(pos=(128, 96), size=(32, 32), scale=2,
                            frames=4, rate=10, repeat=False)
-
-
-
