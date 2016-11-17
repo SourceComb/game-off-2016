@@ -20,3 +20,12 @@ class PlayerSprite(CreatureSheet):
                            frames=4, rate=10, repeat=False)
     jump_left =     Sprite(pos=(128, 96), size=(32, 32), scale=2,
                            frames=4, rate=10, repeat=False)
+
+    attack_right =  Sprite(pos=(0, 128), size=(32, 32), scale=2,
+                           frames=3, rate=10, repeat=True)
+
+class ZombieSprite(CreatureSheet):
+    run_left =      Sprite(pos=(0, 448), size=(32, 32), scale=2,
+                           frames=4, rate=5)
+    run_right =     Sprite(pos=(0, 480), size=(32, 32), scale=2,
+                           frames=4, rate=5)

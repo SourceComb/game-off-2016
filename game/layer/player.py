@@ -6,7 +6,7 @@ from ..unit import mtr
 
 
 _hspeed = 4 * mtr
-_vspeed = 4 * mtr
+_vspeed = 10 * mtr
 
 
 class PlayerLayer(ScrollableLayer):
