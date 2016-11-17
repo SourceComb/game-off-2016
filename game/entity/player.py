@@ -1,12 +1,12 @@
 from cocos.euclid import Vector2
 from .component import Entity, Droppable, MapCollidable, Spritable
-from ..sprite.sprites import PlayerSprite
+from ..sprite.creature import PlayerSprite
 
 
 class Player(Entity, Spritable, MapCollidable, Droppable):
     def __init__(self, map, x, y):
         Entity.__init__(self, (x, y))
-        Spritable.__init__(self, PlayerSprite.idle)
+        Spritable.__init__(self, PlayerSprite.idle_right)
         MapCollidable.__init__(self, map, 'slide')
         Droppable.__init__(self)
 
