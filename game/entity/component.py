@@ -220,7 +220,7 @@ class MapCollidable:
     made available for checking whether or not this entity is touching the
     ground.'''
 
-    EVENTS = ('on_map_connect',)
+    EVENTS = 'on_map_connect', 'on_map_disconnect'
 
     def __init__(self, map, collide_strategy):
         self._MapCollidable_collider = \
@@ -233,7 +233,10 @@ class MapCollidable:
 
         def on_connect(self, direction, obj):
             self._MapCollidable_connected[direction] = True
-        self.push_handlers(on_map_connect=on_connect)
+        def on_disconnect(self, direction):
+            self._MapCollidable_connected[direction] = False
+        self.push_handlers(on_map_connect=on_connect,
+                           on_map_disconnect=on_disconnect)
 
     @property
     def grounded(self):
@@ -263,16 +266,16 @@ class MapCollidable:
         connected = self._MapCollidable_connected
         if connected['up'] and self.vel.y:
             # Moved down so no longer connected
-            connected['up'] = False
+            self.dispatch_event('on_map_disconnect', self, 'up')
         if connected['down'] and self.vel.y:
             # Moved up so no longer connected
-            connected['down'] = False
+            self.dispatch_event('on_map_disconnect', self, 'down')
         if connected['left'] and self.vel.x:
             # Moved right so no longer connected
-            connected['left'] = False
+            self.dispatch_event('on_map_disconnect', self, 'left')
         if connected['right'] and self.vel.x:
             # Moved left so no longer connected
-            connected['right'] = False
+            self.dispatch_event('on_map_disconnect', self, 'right')
 
 
 class _CustomMapCollider(RectMapWithPropsCollider):

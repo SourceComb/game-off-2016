@@ -12,6 +12,7 @@ class Player(Entity, Spritable, MapCollidable, Droppable):
 
         self.running = False
         self.facing = 'right'
+        self.was_grounded = False
 
     @property
     def hvel(self):
@@ -31,13 +32,27 @@ class Player(Entity, Spritable, MapCollidable, Droppable):
     def _apply_velocity(self, dt):
         MapCollidable._apply_velocity(self, dt)
 
+    def select_sprite(self):
+        if self.grounded:
+            type = 'run_' if self.vel.x else 'idle_'
+        else:
+            type = 'jump_'
+        self.sprite = getattr(PlayerSprite, type + self.facing)
+
+    def on_map_connect(self, _, direction, obj):
+        if direction == 'down' and not self.was_grounded:
+            self.was_grounded = True
+            self.select_sprite()
+
+    def on_map_disconnect(self, _, direction):
+        if direction == 'down' and self.was_grounded:
+            self.was_grounded = False
+            self.select_sprite()
+
     def on_accelerate(self, _, change):
         if change.x:
-            if self.vel.x > 0:
-                self.facing = 'right'
-                self.sprite = PlayerSprite.run_right
-            elif self.vel.x < 0:
+            if self.vel.x < 0:
                 self.facing = 'left'
-                self.sprite = PlayerSprite.run_left
-            else:
-                self.sprite = getattr(PlayerSprite, 'idle_' + self.facing)
+            elif self.vel.x > 0:
+                self.facing = 'right'
+            self.select_sprite()
