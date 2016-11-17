@@ -20,11 +20,19 @@ class PlayerLayer(ScrollableLayer):
 
     def setxvel(self, val, d=None):
         '''Utility for setting players X velocity from input'''
-        vel = val * _hspeed
         if d is None:
-            self.player.input_vel.x = vel
-        else:
-            self.player.input_vel.x += vel * d
+            # Normalise controller input
+            d = 1 if round(val) else -1
+            val = 1 if val > 0 else -1
+
+        if d < 0:
+            # Releasing a key; set vel to 0
+            if (val < 0) != (self.player.vel.x < 0):
+                # Don't do anything if the direction is not the same
+                return
+            val = 0
+        # Set velocity
+        self.player.hvel = val * _hspeed
 
     def setjump(self, d):
         '''Utility for setting players Y velocity from jump input'''

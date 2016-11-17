@@ -10,13 +10,25 @@ class Player(Entity, Spritable, MapCollidable, Droppable):
         MapCollidable.__init__(self, map, 'slide')
         Droppable.__init__(self)
 
-        self.input_vel = Vector2(0, 0)
+        self.running = False
         self.facing = 'right'
 
+    @property
+    def hvel(self):
+        return None
+
+    @hvel.setter
+    def hvel(self, val):
+        if val and not self.running:
+            # Need to start running
+            self.running = True
+            self.vel += Vector2(val, 0.0)
+        elif val == 0 and self.running:
+            # Need to stop running
+            self.running = False
+            self.vel -= Vector2(self.vel.x, 0.0)
+
     def _apply_velocity(self, dt):
-        vel = self.vel
-        vel.x = self.input_vel.x
-        self.vel = vel
         MapCollidable._apply_velocity(self, dt)
 
     def on_accelerate(self, _, change):
