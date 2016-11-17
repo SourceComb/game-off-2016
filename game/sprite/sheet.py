@@ -38,12 +38,13 @@ class _SheetDefaults:
 
 
 class Sprite:
-    def __init__(self, pos, size, scale=1, frames=1, rate=0):
+    def __init__(self, pos, size, scale=1, frames=1, rate=0, repeat=True):
         self.pos = pos
         self.size = size
         self.scale = scale
         self.frames = frames
         self.rate = rate
+        self.repeat = repeat
 
     def fill_defaults(self, defaults):
         if hasattr(defaults, 'scale') and defaults.scale is not None:
@@ -62,6 +63,8 @@ class Sprite:
         dur = 1.0/self.rate
         frames = [pyglet.image.AnimationFrame(self.toimg(canvas, i), dur)
                   for i in range(self.frames)]
+        if not self.repeat:
+            frames[-1].duration = None
         return pyglet.image.Animation(frames)
 
     def gensprite(self, canvas):
