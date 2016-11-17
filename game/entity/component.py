@@ -63,13 +63,26 @@ class Entity(CocosNode, EventDispatcher, metaclass=EntityMeta):
     velocity. When active, the position is automatically updated based on
     velocity. They emit the `on_move` event when their position changes.'''
 
-    EVENTS = ('on_move',)
+    EVENTS = ('on_move', 'on_state_change')
+     # More states can be added in child classes.
+    STATES = ('right_idle', 'left_idle')
 
     def __init__(self, pos, size=(0, 0)):
         CocosNode.__init__(self)
+        self.state = Entity.STATES[0]
 
         self._rect = Rect(*pos, *size)
         self._vel = Vector2(0.0, 0.0)
+
+        self.push_handlers(on_state_change=self.handler_state_change)
+
+    def handler_state_change(self, state):
+        """
+        Event handler for state changes.  Needs to be implemented by children
+        classes.
+        :return: None
+        """
+        raise NotImplementedError
 
     def on_enter(self):
         self.schedule(self.tick)
@@ -78,6 +91,10 @@ class Entity(CocosNode, EventDispatcher, metaclass=EntityMeta):
     def on_exit(self):
         self.unschedule(self.tick)
         super().on_exit()
+
+    def change_state(self, state):
+        self.state = state
+        self.dispatch_event('on_state_change', state)
 
     def tick(self, dt):
         '''Perform necessary update operations.'''
@@ -143,15 +160,46 @@ class Spritable:
             sprite = sprite(self.pos)
         else:
             sprite.position = self.center
+
+        # Create state -> sprite map.
+        self.state_sprite_map = {}
+        self.map_state_sprites()  # This should be overwritten by child
+
+        # Add sprite
+        self._Spritable_sprite = ''
+        self.change_sprite(sprite)
+
+        # Update sprite position when the entity moves
+        def set_pos(_, direction):
+            self._Spritable_sprite.position = self.center
+        self.push_handlers(on_move=set_pos)
+
+    def change_sprite(self, sprite):
+        """
+        Swaps over the current sprite to a new one.
+        :param sprite: Sprite instance to swap to.
+        :return: None
+        """
+        # Get underlying Cocos sprite
+        if isinstance(sprite, sheet.Sprite):
+            sprite = sprite(self.pos)
+
+        if self._Spritable_sprite in self.get_children():
+            self.remove(self._Spritable_sprite)
+
         # Ensure the entity rect size is correct
         self.size = sprite.width, sprite.height
+        self._Spritable_sprite = sprite  # Store reference to current sprite
         # Add the sprite as a subnode
-        self._Spritable_sprite = sprite
         self.add(sprite)
-        # Update sprite position when the entity moves
-        def setpos(_, pos):
-            self._Spritable_sprite.position = self.center
-        self.push_handlers(on_move=setpos)
+
+    def map_state_sprites(self):
+        """
+        Populates the dictionary which maps states to sprites.  Has to be
+        implemented by the child class
+        :return: None
+        """
+        raise NotImplementedError
 
 
 class Killable:
@@ -280,6 +328,8 @@ class _CustomMapCollider(RectMapWithPropsCollider):
 
 
 # Accel due to grav, in px/s/s
+# Calculated from approximately 9.81 * 64/1.9
+# (ratio of px/m, based on viking sprite dimensions and real-world height)
 _a_g = Vector2(0.0, -9.8) * mtr
 class Droppable:
     '''The Droppable component indicates that an entity should be affected by
