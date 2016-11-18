@@ -8,6 +8,7 @@ import pyglet.resource
 
 from ..input import InputHandler, J, K
 from ..layer.player import PlayerLayer
+from ..layer.enemy import EnemyLayer
 from ..unit import mtr
 
 
@@ -51,14 +52,23 @@ class LevelScene(Scene, InputHandler):
         mgr.add(lvlmap)
         mgr.set_focus(*self.cam_pos)
 
-        # Spawn entities based on locations set in map
-        spawns = level['spawns']
-        # Spawn player
+        # Add entity layers
         player_layer = PlayerLayer(lvlmap)
         self.player = player_layer.player
         mgr.add(player_layer)
-        playerspawn = spawns.match(spawn_type='player')[0]
-        self.player.center = playerspawn.center
+        enemy_layer = EnemyLayer(lvlmap)
+        mgr.add(enemy_layer)
+
+        # Spawn entities based on locations set in map
+        spawns = level['spawns']
+        for obj in spawns.objects:
+            if obj.usertype == 'enemy_spawn':
+                enemy_layer.spawn(obj['entity_type'], (obj.x, obj.y))
+            elif obj.usertype == 'player_spawn':
+                self.player.center = obj.center
+            else:
+                print('[WARN]: Cannot spawn', obj.usertype,
+                      '(entity_type == {!r})'.format(obj['entity_type']))
 
         # Set input bindings
         # Extra binding functions

@@ -79,9 +79,13 @@
  <objectgroup name="spawns">
   <object id="4" name="spawn" type="player_spawn" x="271" y="528.5">
    <properties>
-    <property name="spawn_type" value="player"/>
+    <property name="entity_type" value="%"/>
    </properties>
   </object>
-  <object id="7" name="enemy1" type="enemy_spawn" x="495" y="399"/>
+  <object id="7" name="zombie" type="entity_spawn" x="495" y="399">
+   <properties>
+    <property name="entity_type" value="Zombie"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>
