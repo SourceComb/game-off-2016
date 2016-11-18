@@ -62,9 +62,9 @@ class LevelScene(Scene, InputHandler):
         # Spawn entities based on locations set in map
         spawns = level['spawns']
         for obj in spawns.objects:
-            if obj.usertype == 'enemy_spawn':
+            if obj.usertype == 'spawn.enemy':
                 enemy_layer.spawn(obj['entity_type'], (obj.x, obj.y))
-            elif obj.usertype == 'player_spawn':
+            elif obj.usertype == 'spawn.player':
                 self.player.center = obj.center
             else:
                 print('[WARN]: Cannot spawn', obj.usertype,

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-up" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="8">
+<map version="1.0" orientation="orthogonal" renderorder="right-up" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="11">
  <tileset firstgid="1" name="test_tiles" tilewidth="32" tileheight="32" tilecount="64" columns="8">
   <image source="test_tiles.png" width="256" height="256"/>
   <tile id="48">
@@ -52,6 +52,9 @@
    </properties>
   </tile>
  </tileset>
+ <imagelayer name="backdrop" offsetx="0" offsety="222">
+  <image source="test_bg.png" width="640" height="400"/>
+ </imagelayer>
  <layer name="tiles" width="20" height="20">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,50,50,0,0,0,
@@ -76,15 +79,29 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
+ <objectgroup name="actions">
+  <object id="10" name="hello" type="action.sign" gid="60" x="224" y="320" width="32" height="32">
+   <properties>
+    <property name="sign_content" value="Hello, World!"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup name="spawns">
-  <object id="4" name="spawn" type="player_spawn" x="271" y="528.5">
+  <object id="4" name="spawn" type="spawn.player" x="271" y="528.5">
    <properties>
     <property name="entity_type" value="%"/>
    </properties>
   </object>
-  <object id="7" name="zombie" type="enemy_spawn" x="495" y="399">
+  <object id="7" name="zombie" type="spawn.enemy" x="495" y="399">
    <properties>
     <property name="entity_type" value="Zombie"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup name="pickups">
+  <object id="9" name="health pack" type="pickup.hp" gid="1" x="207" y="176" width="32" height="32">
+   <properties>
+    <property name="hp_increase" type="int" value="8"/>
    </properties>
   </object>
  </objectgroup>
