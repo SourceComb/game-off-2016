@@ -82,7 +82,7 @@
     <property name="entity_type" value="%"/>
    </properties>
   </object>
-  <object id="7" name="zombie" type="entity_spawn" x="495" y="399">
+  <object id="7" name="zombie" type="enemy_spawn" x="495" y="399">
    <properties>
     <property name="entity_type" value="Zombie"/>
    </properties>

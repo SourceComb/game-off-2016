@@ -12,11 +12,12 @@ class EnemyLayer(ScrollableLayer):
         self.map = map
 
     def spawn(self, etype, pos):
+        global enemy
         if isinstance(etype, str):
             if hasattr(enemy, etype):
                 etype = getattr(enemy, etype)
             else:
-                print('[WARN]: No such enemy type ', repr(etype))
+                print('[WARN]: No such enemy type', repr(etype))
                 return
         enemy = etype(pos, self.map)
         self.add(enemy)
