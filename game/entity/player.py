@@ -15,6 +15,14 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable):
         self.running = False
         self.facing = 'right'
         self.was_grounded = False
+        self.invuln = 0
+
+        def tick(dt):
+            if self.invuln > 0:
+                self.invuln -= dt
+                if self.invuln < 0:
+                    self.invuln = 0
+        self.schedule(tick)
 
     @property
     def hvel(self):
@@ -76,7 +84,12 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable):
             self.schedule(apply_knockback)
 
     def on_damage(self, _, dmg):
-        print('took', dmg, 'damge (', self.health, ')')
+        if self.invuln > 0:
+            self.health += dmg
+        else:
+            print('took', dmg, 'damage (', self.health, ')')
+            self.invuln = 1
+        return True     # Prevents double-dispatch
 
     def on_map_disconnect(self, _, direction):
         if direction == 'down' and self.was_grounded:
