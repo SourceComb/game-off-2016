@@ -160,7 +160,7 @@ class Spritable:
     @sprite.setter
     def sprite(self, new):
         if isinstance(new, sheet.Sprite):
-            new = new(self.pos)
+            new = new(self.center)
         else:
             new.position = self.center
         # Ensure rect size matches sprite
