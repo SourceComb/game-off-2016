@@ -1,13 +1,14 @@
 from cocos.euclid import Vector2
-from .component import Entity, Droppable, Killable, MapCollidable, Spritable
-from ..sprite.creature import PlayerSprite
+from .component import (Entity, Droppable, Killable, MapCollidable, Spritable,
+                        State, Stateable)
+from ..sprite.creature import PlayerSpriteSheet
 from ..unit import mtr
 
 
-class Player(Entity, Spritable, Killable, MapCollidable, Droppable):
+class Player(Entity, Spritable, Killable, MapCollidable, Droppable, Stateable):
     def __init__(self, map, x, y):
         Entity.__init__(self, (x, y))
-        Spritable.__init__(self, PlayerSprite.idle_right)
+        Spritable.__init__(self, PlayerSpriteSheet.idle_right)
         Killable.__init__(self, 40)
         MapCollidable.__init__(self, map, 'slide')
         Droppable.__init__(self)
@@ -47,7 +48,8 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable):
             type = 'run_' if self.vel.x else 'idle_'
         else:
             type = 'jump_'
-        self.sprite = getattr(PlayerSprite, type + self.facing)
+        self.sprite = getattr(PlayerSpriteSheet, type + self.facing)
+        self.sprite.push_handlers(on_animation_end=self.on_animation_end)
 
     def on_map_connect(self, _, direction, obj):
         # Stop moving if not running
@@ -103,3 +105,6 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable):
             elif self.vel.x > 0:
                 self.facing = 'right'
             self.select_sprite()
+
+    def on_animation_end(self):
+        print("animation_end")

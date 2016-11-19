@@ -5,7 +5,7 @@ class CreatureSheet(Spritesheet):
     info.defaults.rate = 8
 
 
-class PlayerSprite(CreatureSheet):
+class PlayerSpriteSheet(CreatureSheet):
     idle_left =     Sprite(pos=(64, 64), size=(32, 32), scale=2,
                            frames=2, rate=1)
     idle_right =    Sprite(pos=(0, 64), size=(32, 32), scale=2,
@@ -24,7 +24,7 @@ class PlayerSprite(CreatureSheet):
     attack_right =  Sprite(pos=(0, 128), size=(32, 32), scale=2,
                            frames=3, rate=10, repeat=True)
 
-class ZombieSprite(CreatureSheet):
+class ZombieSpriteSheet(CreatureSheet):
     run_left =      Sprite(pos=(0, 448), size=(32, 32), scale=2,
                            frames=4, rate=5)
     run_right =     Sprite(pos=(0, 480), size=(32, 32), scale=2,

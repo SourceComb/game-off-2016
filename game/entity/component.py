@@ -61,9 +61,13 @@ class Entity(CocosNode, EventDispatcher, metaclass=EntityMeta):
 
     All entities have a position and size (under the `rect` property), and a
     velocity. When active, the position is automatically updated based on
-    velocity. They emit the `on_move` event when their position changes.'''
+    velocity. They emit the `on_move` event when their position changes.
 
-    EVENTS = 'on_move', 'on_accelerate'
+    They are automatically registered to listen for events as specified in
+    the class EVENTS string
+    '''
+
+    EVENTS = 'on_move', 'on_accelerate',
 
     def __init__(self, pos, size=(0, 0)):
         CocosNode.__init__(self)
@@ -145,6 +149,7 @@ class Spritable:
     This sprite is passed to the constructor. It is automatically added as a
     child node. Its position is kept in sync with the entity's.'''
 
+    EVENTS = 'on_animation_end'
     def __init__(self, sprite):
         self._Spritable_sprite = None
         self.sprite = sprite
@@ -172,6 +177,9 @@ class Spritable:
         if old is not None:
             self.remove(old)
         self.add(new)
+
+    def on_animation_end(self):
+        raise NotImplementedError
 
 
 class Killable:
@@ -315,3 +323,47 @@ class Droppable:
 
     def _Droppable_apply_gravity(self, dt):
         self.vel += _a_g * dt
+
+class State:
+    def __init__(self, name, duration=float('inf'),
+                 active_duration=float('inf')):
+        self.name = name
+        self.time_active = 0
+        self.time_since_creation = 0
+        self.duration = duration
+        self.active_duration = active_duration
+
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.name == other
+        elif isinstance(other, State):
+            return self.name == other.name
+        else:
+            return ValueError("Comparison not defined for non-string and "
+                              "non-State objects")
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    @property
+    def is_dead(self):
+        return (self.time_active > self.active_duration or
+                self.time_since_creation > self.duration)
+
+class Stateable:
+
+    def __init__(self, default_state=State('idle')):
+        self.state_stack = [default_state]
+
+    def push_state(self, state):
+        self.state_stack.append(state)
+
+    def pop_state(self):
+        if len(self.state_stack) > 1:
+            return self.state_stack.pop()
+        else:
+            raise ValueError("Can not pop state, only one state in stack")
+
+    @property
+    def cur_state(self):
+        return self.state_stack[-1]
