@@ -15,9 +15,9 @@ from ..unit import mtr
 def load_map(mapname):
     '''Hack to ensure maps with relative image paths get loaded correctly,
     by manipulating pyglet.resource.path.'''
-    pyglet.resource.path.insert(0, 'asset/map/' + mapname)
+    pyglet.resource.path.insert(0, 'asset/map')
     pyglet.resource.reindex()
-    layer = load_tmx('map.tmx')
+    layer = load_tmx('level_{}.tmx'.format(mapname))
     pyglet.resource.path.pop(0)
     pyglet.resource.reindex()
     return layer

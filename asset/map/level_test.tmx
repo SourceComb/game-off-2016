@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-up" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="11">
  <tileset firstgid="1" name="test_tiles" tilewidth="32" tileheight="32" tilecount="64" columns="8">
-  <image source="test_tiles.png" width="256" height="256"/>
+  <image source="tiles_test.png" width="256" height="256"/>
   <tile id="48">
    <properties>
     <property name="bottom" type="int" value="0"/>
@@ -53,7 +53,7 @@
   </tile>
  </tileset>
  <imagelayer name="backdrop" offsetx="0" offsety="222">
-  <image source="test_bg.png" width="640" height="400"/>
+  <image source="backdrop_test.png" width="640" height="400"/>
  </imagelayer>
  <layer name="tiles" width="20" height="20">
   <data encoding="csv">
