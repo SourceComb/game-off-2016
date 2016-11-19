@@ -35,6 +35,8 @@ class LevelScene(Scene, InputHandler):
 
         # Load level and set scaling properties on tilesets
         level = load_map(lvlname)
+        # For each tile in the map, set scaling behaviour to no interpolation.
+        # This means that we don't get blurring on our scaled sprites.
         for tile in level['test_tiles'].values():
             tex = tile.image.get_texture()
             glBindTexture(tex.target, tex.id)
@@ -45,44 +47,45 @@ class LevelScene(Scene, InputHandler):
 
         # Set info for use in camera controls
         self.cam_pos = Vector2(0, 0)
-        self.camvel = Vector2(0, 0)
+        self.cam_vel = Vector2(0, 0)
         self.mgr = mgr
         # Set up scroll manager
         mgr.scale = 1.0
         mgr.add(lvlmap)
         mgr.set_focus(*self.cam_pos)
 
-        # Add entity layers
-        player_layer = PlayerLayer(lvlmap)
-        self.player = player_layer.player
-        mgr.add(player_layer)
-        enemy_layer = EnemyLayer(lvlmap)
-        mgr.add(enemy_layer)
-
         # Spawn entities based on locations set in map
-        spawns = level['spawns']
-        for obj in spawns.objects:
-            if obj.usertype == 'spawn.enemy':
-                enemy_layer.spawn(obj['entity_type'], (obj.x, obj.y))
-            elif obj.usertype == 'spawn.player':
-                self.player.center = obj.center
-            else:
-                print('[WARN]: Cannot spawn', obj.usertype,
-                      '(entity_type == {!r})'.format(obj['entity_type']))
+        self.player = None  # Holds player entity
+        player_layer, enemy_layer = self._create_entity_layers(level, lvlmap)
 
         # Set input bindings
+        self.bindings = {}
+        self._bind_events(player_layer)
+
+        # Set update loop
+        self.schedule(self.tick)
+
+    # __init__ helper functions
+    def _bind_events(self, player_layer):
+        """
+        Binds all events for which the Scene should listen and delegate, if
+        necessary.  Also binds all inputs.
+        :param player_layer:  Layer which player is on, for input binding.
+        :return: None
+        """
         # Extra binding functions
-        def updatecamx(value):
-            self.camvel.x = value
-        def updatecamy(value):
-            self.camvel.y = -value
+        def update_cam_x(value):
+            self.cam_vel.x = value
+        def update_cam_y(value):
+            self.cam_vel.y = -value
+
         # Keyboard bindings
         self.bindings['keyboard'] = keybinds = {}
         # Basic binds
         keybinds.update({
-            K.UP: player_layer.setjump,
-            K.LEFT: lambda d: player_layer.setxvel(-1, d),
-            K.RIGHT: lambda d: player_layer.setxvel(1, d),
+            K.UP: player_layer.set_jump,
+            K.LEFT: lambda d: player_layer.set_xvel(-1, d),
+            K.RIGHT: lambda d: player_layer.set_xvel(1, d),
         })
         # Extra binds
         keybinds.update({
@@ -96,22 +99,49 @@ class LevelScene(Scene, InputHandler):
             K.K: keybinds[K.UP],
             K.L: keybinds[K.RIGHT],
         })
+
         # Joystick bindings
         self.bindings['joystick'] = {}
         self.bindings['joystick'].update({
-            J.A: player_layer.setjump,
-            J.LSX: player_layer.setxvel,
+            J.A: player_layer.set_jump,
+            J.LSX: player_layer.set_xvel,
 
-            J.RSX: updatecamx,
-            J.RSY: updatecamy
+            J.RSX: update_cam_x,
+            J.RSY: update_cam_y
         })
+    def _create_entity_layers(self, level, level_map):
+        """
+        Create Layers for the player and for enemies and adds them to the
+        ScrollingManager.  Populates the layers with all spawns dictated to by
+        the level map.
+        :param level: The map, read in directly from the .TMX
+        :param level_map: The tiles which make up level, retrieved from
+            levels['tiles']
+        :return: Layers for the player, enemies
+        """
+        # Add entity layers
+        player_layer = PlayerLayer(level_map)
+        self.player = player_layer.player
+        self.mgr.add(player_layer)
+        enemy_layer = EnemyLayer(level_map)
+        self.mgr.add(enemy_layer)
 
-        # Set update loop
-        self.schedule(self.tick)
+        spawns = level['spawns']
+        for obj in spawns.objects:
+            if obj.usertype == 'spawn.enemy':
+                enemy_layer.spawn(obj['entity_type'], (obj.x, obj.y))
+            elif obj.usertype == 'spawn.player':
+                self.player.center = obj.center
+            else:
+                print('[WARN]: Cannot spawn', obj.usertype,
+                      '(entity_type == {!r})'.format(obj['entity_type']))
 
+        return player_layer, enemy_layer
+
+    # Actual methods
     def tick(self, dt):
         '''Update camera'''
-        self.cam_pos += self.camvel * dt * 8 * mtr
+        self.cam_pos += self.cam_vel * dt * 8 * mtr
         player_pos = self.player.center
         self.mgr.force_focus(player_pos[0] + self.cam_pos.x,
                              player_pos[1] + self.cam_pos.y)
