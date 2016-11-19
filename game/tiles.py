@@ -177,7 +177,7 @@ def load_tmx(filename):
         image = pyglet.image.load(path)
         layer = TmxImageLayer(
             image, (int(tag.attrib['offsetx']), int(tag.attrib['offsety'])),
-            width * tile_width
+            height * tile_height
         )
         resource.add_resource(tag.attrib['name'], layer)
 
