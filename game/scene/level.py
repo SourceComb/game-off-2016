@@ -9,18 +9,8 @@ import pyglet.resource
 from ..input import InputHandler, J, K
 from ..layer.player import PlayerLayer
 from ..layer.enemy import EnemyLayer
+from ..tiles import load_map
 from ..unit import mtr
-
-
-def load_map(mapname):
-    '''Hack to ensure maps with relative image paths get loaded correctly,
-    by manipulating pyglet.resource.path.'''
-    pyglet.resource.path.insert(0, 'asset/map')
-    pyglet.resource.reindex()
-    layer = load_tmx('level_{}.tmx'.format(mapname))
-    pyglet.resource.path.pop(0)
-    pyglet.resource.reindex()
-    return layer
 
 
 class LevelScene(Scene, InputHandler):
@@ -49,14 +39,29 @@ class LevelScene(Scene, InputHandler):
         self.cam_pos = Vector2(0, 0)
         self.cam_vel = Vector2(0, 0)
         self.mgr = mgr
-        # Set up scroll manager
-        mgr.scale = 1.0
-        mgr.add(lvlmap)
-        mgr.set_focus(*self.cam_pos)
+
+        # Add entity layers
+        player_layer = PlayerLayer(lvlmap)
+        self.player = player_layer.player
+        enemy_layer = EnemyLayer(lvlmap)
 
         # Spawn entities based on locations set in map
-        self.player = None  # Holds player entity
-        player_layer, enemy_layer = self._create_entity_layers(level, lvlmap)
+        spawns = level['spawns']
+        for obj in spawns.objects:
+            if obj.usertype == 'spawn.enemy':
+                enemy_layer.spawn(obj['entity_type'], (obj.x, obj.y))
+            elif obj.usertype == 'spawn.player':
+                self.player.center = obj.center
+            else:
+                print('[WARN]: Cannot spawn', obj.usertype,
+                      '(entity_type == {!r})'.format(obj['entity_type']))
+
+        # Set up scroll manager
+        mgr.scale = 1.0
+        mgr.add(level['backdrop'])
+        mgr.add(lvlmap)
+        mgr.add(enemy_layer)
+        mgr.add(player_layer)
 
         # Set input bindings
         self.bindings = {}
@@ -109,36 +114,10 @@ class LevelScene(Scene, InputHandler):
             J.RSX: update_cam_x,
             J.RSY: update_cam_y
         })
-    def _create_entity_layers(self, level, level_map):
-        """
-        Create Layers for the player and for enemies and adds them to the
-        ScrollingManager.  Populates the layers with all spawns dictated to by
-        the level map.
-        :param level: The map, read in directly from the .TMX
-        :param level_map: The tiles which make up level, retrieved from
-            levels['tiles']
-        :return: Layers for the player, enemies
-        """
-        # Add entity layers
-        player_layer = PlayerLayer(level_map)
-        self.player = player_layer.player
-        self.mgr.add(player_layer)
-        enemy_layer = EnemyLayer(level_map)
-        self.mgr.add(enemy_layer)
 
-        spawns = level['spawns']
-        for obj in spawns.objects:
-            if obj.usertype == 'spawn.enemy':
-                enemy_layer.spawn(obj['entity_type'], (obj.x, obj.y))
-            elif obj.usertype == 'spawn.player':
-                self.player.center = obj.center
-            else:
-                print('[WARN]: Cannot spawn', obj.usertype,
-                      '(entity_type == {!r})'.format(obj['entity_type']))
+        # Set update loop
+        self.schedule(self.tick)
 
-        return player_layer, enemy_layer
-
-    # Actual methods
     def tick(self, dt):
         '''Update camera'''
         self.cam_pos += self.cam_vel * dt * 8 * mtr
