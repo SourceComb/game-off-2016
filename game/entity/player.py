@@ -44,6 +44,7 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable, Stateable):
         MapCollidable._apply_velocity(self, dt)
 
     def select_sprite(self):
+        self.sprite.remove_handlers(on_animation_end=self.on_animation_end)
         if self.grounded:
             type = 'run_' if self.vel.x else 'idle_'
         else:
