@@ -368,10 +368,10 @@ class Stateable:
             if state.is_dead:
                 self.pop_state(i)
                 continue
-            state.duration += dt
+            state.time_since_creation += dt
 
         # Update current state as well
-        self.cur_state.active_duration += dt
+        self.cur_state.time_active += dt
 
     def push_state(self, state):
         self._state_stack.append(state)

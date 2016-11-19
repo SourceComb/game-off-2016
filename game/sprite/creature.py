@@ -27,6 +27,11 @@ class PlayerSpriteSheet(CreatureSheet):
                            frames=3, rate=10)
 
 class ZombieSpriteSheet(CreatureSheet):
+    idle_left =      Sprite(pos=(0, 448), size=(32, 32), scale=2,
+                           frames=4, rate=5)
+    idle_right =     Sprite(pos=(0, 480), size=(32, 32), scale=2,
+                           frames=4, rate=5)
+
     run_left =      Sprite(pos=(0, 448), size=(32, 32), scale=2,
                            frames=4, rate=5)
     run_right =     Sprite(pos=(0, 480), size=(32, 32), scale=2,

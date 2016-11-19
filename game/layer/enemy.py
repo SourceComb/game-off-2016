@@ -19,5 +19,5 @@ class EnemyLayer(ScrollableLayer):
             else:
                 print('[WARN]: No such enemy type', repr(etype))
                 return
-        enemy = etype(pos, self.map)
+        enemy = etype(self.map, pos[0], pos[1])
         self.add(enemy)
