@@ -4,6 +4,7 @@ from cocos.layer.base_layers import Layer
 import pyglet.input
 
 import pyglet.window.key as K
+import pyglet.window.mouse as M
 
 class J:
     '''Joystick constants'''

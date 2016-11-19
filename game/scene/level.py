@@ -6,7 +6,7 @@ from pyglet.gl import GL_NEAREST, GL_TEXTURE_MAG_FILTER, \
     glBindTexture, glTexParameteri
 import pyglet.resource
 
-from ..input import InputHandler, J, K
+from ..input import InputHandler, J, K, M
 from ..layer.player import PlayerLayer
 from ..layer.enemy import EnemyLayer
 from ..tiles import load_map
@@ -123,6 +123,12 @@ class LevelScene(Scene, InputHandler):
 
             J.RSX: update_cam_x,
             J.RSY: update_cam_y
+        })
+
+        # Mouse bindings
+        self.bindings['mouse'] = {}
+        self.bindings['mouse'].update({
+            M.LEFT: player_layer.attack
         })
 
     def tick(self, dt):

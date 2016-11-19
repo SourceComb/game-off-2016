@@ -22,7 +22,9 @@ class PlayerSpriteSheet(CreatureSheet):
                            frames=4, rate=10, repeat=False)
 
     attack_right =  Sprite(pos=(0, 128), size=(32, 32), scale=2,
-                           frames=3, rate=10, repeat=True)
+                           frames=3, rate=10)
+    attack_left =  Sprite(pos=(0, 128), size=(32, 32), scale=2,
+                           frames=3, rate=10)
 
 class ZombieSpriteSheet(CreatureSheet):
     run_left =      Sprite(pos=(0, 448), size=(32, 32), scale=2,

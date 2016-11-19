@@ -12,6 +12,7 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable, Stateable):
         Killable.__init__(self, 40)
         MapCollidable.__init__(self, map, 'slide')
         Droppable.__init__(self)
+        Stateable.__init__(self)
 
         self.running = False
         self.facing = 'right'
@@ -43,9 +44,11 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable, Stateable):
     def _apply_velocity(self, dt):
         MapCollidable._apply_velocity(self, dt)
 
-    def select_sprite(self):
+    def change_sprite(self):
         self.sprite.remove_handlers(on_animation_end=self.on_animation_end)
-        if self.grounded:
+        if self.cur_state == 'attack':
+            type = 'attack_'
+        elif self.grounded:
             type = 'run_' if self.vel.x else 'idle_'
         else:
             type = 'jump_'
@@ -64,7 +67,7 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable, Stateable):
         # Fix sprite if landing
         if direction == 'down' and not self.was_grounded:
             self.was_grounded = True
-            self.select_sprite()
+            self.change_sprite()
 
         # Check for spikes
         dmg = obj.get('damage')
@@ -97,7 +100,7 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable, Stateable):
     def on_map_disconnect(self, _, direction):
         if direction == 'down' and self.was_grounded:
             self.was_grounded = False
-            self.select_sprite()
+            self.change_sprite()
 
     def on_accelerate(self, _, change):
         if change.x:
@@ -105,7 +108,15 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable, Stateable):
                 self.facing = 'left'
             elif self.vel.x > 0:
                 self.facing = 'right'
-            self.select_sprite()
+            self.change_sprite()
 
     def on_animation_end(self):
-        print("animation_end")
+        if self.cur_state == 'attack':
+            # Attack animation has ended, swap back to previous state
+            self.pop_state()
+            self.change_sprite()
+
+    def attack(self):
+        if self.cur_state != 'attack':
+            self.push_state(State('attack'))
+            self.change_sprite()

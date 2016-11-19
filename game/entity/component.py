@@ -352,18 +352,55 @@ class State:
 
 class Stateable:
 
-    def __init__(self, default_state=State('idle')):
-        self.state_stack = [default_state]
+    def __init__(self, default_state=State('idle_right')):
+        self._state_stack = [default_state]
+
+    def state_update(self, dt):
+        """
+        Updates timers for all states
+        :param dt: time elapsed since last update (ms)
+        :return: None
+        """
+
+        # Update all states, and remove any states that are past end-duration
+        for i in range(len(self._state_stack)-1, -1, -1):
+            state = self._state_stack[i]
+            if state.is_dead:
+                self.pop_state(i)
+                continue
+            state.duration += dt
+
+        # Update current state as well
+        self.cur_state.active_duration += dt
 
     def push_state(self, state):
-        self.state_stack.append(state)
+        self._state_stack.append(state)
 
-    def pop_state(self):
-        if len(self.state_stack) > 1:
-            return self.state_stack.pop()
+    def pop_state(self, i=-1):
+        """
+        i should only be used internally.
+        :param i: Index of state to remove.
+        :return: The topmost State
+        """
+        if self.num_states > 1 and self.num_states > i:
+            return self._state_stack.pop(i)
         else:
-            raise ValueError("Can not pop state, only one state in stack")
+            if self.num_states == 0:
+                raise ValueError("Can not pop state, only one state in stack")
+            else:
+                raise ValueError("Can't pop state at %i, only %i states" % (
+                    i, self.num_states
+                ))
+
+    def swap_active_state(self, state):
+        self._state_stack.pop()
+        self.push_state(state)
+
 
     @property
     def cur_state(self):
-        return self.state_stack[-1]
+        return self._state_stack[-1]
+
+    @property
+    def num_states(self):
+        return len(self._state_stack)

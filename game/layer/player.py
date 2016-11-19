@@ -46,3 +46,7 @@ class PlayerLayer(ScrollableLayer):
             # Jump button pressed, and the player can actually jump so set
             # upwards velocity to jump velocity
             self.player.vel += Vector2(0.0, _vspeed)
+
+    def attack(self, is_mouse_press, vec2):
+        if is_mouse_press > 0:
+            self.player.attack()
