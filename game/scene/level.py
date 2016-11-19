@@ -40,28 +40,17 @@ class LevelScene(Scene, InputHandler):
         self.cam_vel = Vector2(0, 0)
         self.mgr = mgr
 
-        # Add entity layers
-        player_layer = PlayerLayer(lvlmap)
-        self.player = player_layer.player
-        enemy_layer = EnemyLayer(lvlmap)
-
-        # Spawn entities based on locations set in map
-        spawns = level['spawns']
-        for obj in spawns.objects:
-            if obj.usertype == 'spawn.enemy':
-                enemy_layer.spawn(obj['entity_type'], (obj.x, obj.y))
-            elif obj.usertype == 'spawn.player':
-                self.player.center = obj.center
-            else:
-                print('[WARN]: Cannot spawn', obj.usertype,
-                      '(entity_type == {!r})'.format(obj['entity_type']))
-
         # Set up scroll manager
         mgr.scale = 1.0
         mgr.add(level['backdrop'])
         mgr.add(lvlmap)
-        mgr.add(enemy_layer)
+
+        # Create and populate entity layers with spawns
+        self.player = None  # Will hold player entity
+        player_layer, enemy_layer = self._create_entity_layers(level, lvlmap)
+        # Add layers to scrolling manager
         mgr.add(player_layer)
+        mgr.add(enemy_layer)
 
         # Set input bindings
         self.bindings = {}
@@ -117,6 +106,25 @@ class LevelScene(Scene, InputHandler):
 
         # Set update loop
         self.schedule(self.tick)
+    def _create_entity_layers(self, level, level_map):
+        player_layer = PlayerLayer(level_map)
+        enemy_layer = EnemyLayer(level_map)
+
+        # Store reference to player entity
+        self.player = player_layer.player
+
+        # Spawn entities based on locations set in map
+        spawns = level['spawns']
+        for obj in spawns.objects:
+            if obj.usertype == 'spawn.enemy':
+                enemy_layer.spawn(obj['entity_type'], (obj.x, obj.y))
+            elif obj.usertype == 'spawn.player':
+                self.player.center = obj.center
+            else:
+                print('[WARN]: Cannot spawn', obj.usertype,
+                      '(entity_type == {!r})'.format(obj['entity_type']))
+
+        return player_layer, enemy_layer
 
     def tick(self, dt):
         '''Update camera'''
