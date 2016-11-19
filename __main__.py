@@ -5,6 +5,7 @@ from cocos.director import director
 parser = argparse.ArgumentParser()
 parser.add_argument('--sprite', nargs=1)
 parser.add_argument('--bg', nargs=1)
+parser.add_argument('--level', nargs=1)
 args = parser.parse_args()
 
 director.init()
@@ -23,6 +24,12 @@ if args.sprite is not None:
     bg = args.bg[0].split(',') if args.bg else None
 
     scene = SpriteTestScene(sprite, bg)
+
+elif args.level is not None:
+    # To run this test:
+    # $ python . --level 1
+    from game.scene.level import LevelScene
+    scene = LevelScene(args.level[0])
 
 else:
     from game.scene import first_scene

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="tiles_terrain" tilewidth="16" tileheight="16" tilecount="256" columns="16">
- <image source="tiles_terrain.png" width="256" height="256"/>
+<tileset name="tiles_terrain" tilewidth="32" tileheight="32" tilecount="256" columns="16">
+ <image source="tiles_terrain.png" width="512" height="512"/>
  <terraintypes>
   <terrain name="plank_floor" tile="-1"/>
   <terrain name="plank_floor_edge_left" tile="-1"/>

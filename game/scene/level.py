@@ -1,7 +1,7 @@
 from cocos.euclid import Vector2
 from cocos.layer.scrolling import ScrollingManager
 from cocos.scene import Scene
-from cocos.tiles import load_tmx
+from cocos.tiles import TileSet, load_tmx
 from pyglet.gl import GL_NEAREST, GL_TEXTURE_MAG_FILTER, \
     glBindTexture, glTexParameteri
 import pyglet.resource
@@ -27,10 +27,11 @@ class LevelScene(Scene, InputHandler):
         level = load_map(lvlname)
         # For each tile in the map, set scaling behaviour to no interpolation.
         # This means that we don't get blurring on our scaled sprites.
-        for tile in level['test_tiles'].values():
-            tex = tile.image.get_texture()
-            glBindTexture(tex.target, tex.id)
-            glTexParameteri(tex.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+        for name, tileset in level.find(TileSet):
+            for tile in tileset.values():
+                tex = tile.image.get_texture()
+                glBindTexture(tex.target, tex.id)
+                glTexParameteri(tex.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
 
         # Set info for use in camera controls
         self.cam_pos = Vector2(0, 0)
@@ -45,9 +46,9 @@ class LevelScene(Scene, InputHandler):
 
         # Set up scroll manager
         self.mgr = mgr
-        mgr.scale = 1.0
         # Add layers to scrolling manager
-        mgr.add(level['backdrop'])
+        if 'backdrop' in level:
+            mgr.add(level['backdrop'])
         mgr.add(lvlmap)
         mgr.add(enemy_layer)
         mgr.add(player_layer)   # Player should probably always be on top
