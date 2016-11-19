@@ -1,7 +1,6 @@
 from cocos.euclid import Vector2
 from cocos.layer.scrolling import ScrollingManager
 from cocos.scene import Scene
-from cocos.tiles import load_tmx
 from pyglet.gl import GL_NEAREST, GL_TEXTURE_MAG_FILTER, \
     glBindTexture, glTexParameteri
 import pyglet.resource
@@ -9,18 +8,8 @@ import pyglet.resource
 from ..input import InputHandler, J, K
 from ..layer.player import PlayerLayer
 from ..layer.enemy import EnemyLayer
+from ..tiles import load_map
 from ..unit import mtr
-
-
-def load_map(mapname):
-    '''Hack to ensure maps with relative image paths get loaded correctly,
-    by manipulating pyglet.resource.path.'''
-    pyglet.resource.path.insert(0, 'asset/map')
-    pyglet.resource.reindex()
-    layer = load_tmx('level_{}.tmx'.format(mapname))
-    pyglet.resource.path.pop(0)
-    pyglet.resource.reindex()
-    return layer
 
 
 class LevelScene(Scene, InputHandler):
@@ -47,17 +36,11 @@ class LevelScene(Scene, InputHandler):
         self.cam_pos = Vector2(0, 0)
         self.camvel = Vector2(0, 0)
         self.mgr = mgr
-        # Set up scroll manager
-        mgr.scale = 1.0
-        mgr.add(lvlmap)
-        mgr.set_focus(*self.cam_pos)
 
         # Add entity layers
         player_layer = PlayerLayer(lvlmap)
         self.player = player_layer.player
-        mgr.add(player_layer)
         enemy_layer = EnemyLayer(lvlmap)
-        mgr.add(enemy_layer)
 
         # Spawn entities based on locations set in map
         spawns = level['spawns']
@@ -69,6 +52,13 @@ class LevelScene(Scene, InputHandler):
             else:
                 print('[WARN]: Cannot spawn', obj.usertype,
                       '(entity_type == {!r})'.format(obj['entity_type']))
+
+        # Set up scroll manager
+        mgr.scale = 1.0
+        mgr.add(level['backdrop'])
+        mgr.add(lvlmap)
+        mgr.add(enemy_layer)
+        mgr.add(player_layer)
 
         # Set input bindings
         # Extra binding functions
