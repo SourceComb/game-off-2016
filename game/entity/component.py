@@ -63,8 +63,8 @@ class Entity(CocosNode, EventDispatcher, metaclass=EntityMeta):
     velocity. When active, the position is automatically updated based on
     velocity. They emit the `on_move` event when their position changes.
 
-    They are automatically registered to listen for events as specified in
-    the class EVENTS string
+    They are automatically registered to dispatch events as specified in
+    `EVENTS`.
     '''
 
     EVENTS = 'on_move', 'on_accelerate',
@@ -149,7 +149,8 @@ class Spritable:
     This sprite is passed to the constructor. It is automatically added as a
     child node. Its position is kept in sync with the entity's.'''
 
-    EVENTS = 'on_animation_end'
+    EVENTS = ('on_animation_end',)
+
     def __init__(self, sprite):
         self._Spritable_sprite = None
         self.sprite = sprite
@@ -177,9 +178,11 @@ class Spritable:
         if old is not None:
             self.remove(old)
         self.add(new)
-
-    def on_animation_end(self):
-        raise NotImplementedError
+        # Prepare on_animation_end event
+        new.push_handlers(
+            on_animation_end=lambda: \
+                self.dispatch_event('on_animation_end', self, new)
+        )
 
 
 class Killable:
@@ -324,6 +327,7 @@ class Droppable:
     def _Droppable_apply_gravity(self, dt):
         self.vel += _a_g * dt
 
+
 class State:
     def __init__(self, name, duration=float('inf'),
                  active_duration=float('inf')):
@@ -350,10 +354,12 @@ class State:
         return (self.time_active > self.active_duration or
                 self.time_since_creation > self.duration)
 
-class Stateable:
 
-    def __init__(self, default_state=State('idle_right')):
-        self._state_stack = [default_state]
+class Stateable:
+    def __init__(self, default_state=None):
+        if default_state is None:
+            default_state = State('idle_right')
+        self._Stateable_stack = [default_state]
 
     def state_update(self, dt):
         """
@@ -363,8 +369,8 @@ class Stateable:
         """
 
         # Update all states, and remove any states that are past end-duration
-        for i in range(len(self._state_stack)-1, -1, -1):
-            state = self._state_stack[i]
+        for i in range(len(self._Stateable_stack)-1, -1, -1):
+            state = self._Stateable_stack[i]
             if state.is_dead:
                 self.pop_state(i)
                 continue
@@ -374,7 +380,7 @@ class Stateable:
         self.cur_state.time_active += dt
 
     def push_state(self, state):
-        self._state_stack.append(state)
+        self._Stateable_stack.append(state)
 
     def pop_state(self, i=-1):
         """
@@ -383,7 +389,7 @@ class Stateable:
         :return: The topmost State
         """
         if self.num_states > 1 and self.num_states > i:
-            return self._state_stack.pop(i)
+            return self._Stateable_stack.pop(i)
         else:
             if self.num_states == 0:
                 raise ValueError("Can not pop state, only one state in stack")
@@ -393,14 +399,13 @@ class Stateable:
                 ))
 
     def swap_active_state(self, state):
-        self._state_stack.pop()
+        self._Stateable_stack.pop()
         self.push_state(state)
-
 
     @property
     def cur_state(self):
-        return self._state_stack[-1]
+        return self._Stateable_stack[-1]
 
     @property
     def num_states(self):
-        return len(self._state_stack)
+        return len(self._Stateable_stack)

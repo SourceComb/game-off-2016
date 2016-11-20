@@ -46,7 +46,6 @@ class Zombie(Entity, Spritable, MapCollidable, Droppable, Stateable):
         self.running = True
         self.vel = Vector2(val, 0.0)
 
-
     def _apply_velocity(self, dt):
         MapCollidable._apply_velocity(self, dt)
 
@@ -55,7 +54,6 @@ class Zombie(Entity, Spritable, MapCollidable, Droppable, Stateable):
 
         type = 'run_' if self.vel.x else 'idle_'
         self.sprite = getattr(ZombieSpriteSheet, type + self.facing)
-        self.sprite.push_handlers(on_animation_end=self.on_animation_end)
 
     def on_map_connect(self, _, direction, obj):
         # Stop moving if not running
@@ -84,5 +82,5 @@ class Zombie(Entity, Spritable, MapCollidable, Droppable, Stateable):
                 self.facing = 'right'
             self.change_sprite()
 
-    def on_animation_end(self):
+    def on_animation_end(self, _, sprite):
         pass

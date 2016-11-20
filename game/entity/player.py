@@ -53,7 +53,6 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable, Stateable):
         else:
             type = 'jump_'
         self.sprite = getattr(PlayerSpriteSheet, type + self.facing)
-        self.sprite.push_handlers(on_animation_end=self.on_animation_end)
 
     def on_map_connect(self, _, direction, obj):
         # Stop moving if not running
@@ -110,7 +109,7 @@ class Player(Entity, Spritable, Killable, MapCollidable, Droppable, Stateable):
                 self.facing = 'right'
             self.change_sprite()
 
-    def on_animation_end(self):
+    def on_animation_end(self, _, sprite):
         if self.cur_state == 'attack':
             # Attack animation has ended, swap back to previous state
             self.pop_state()
