@@ -2,7 +2,7 @@ from cocos.euclid import Vector2
 from .component import (Entity, Droppable, Killable, MapCollidable, Spritable,
                         State, Stateable)
 from ..sprite.creature import PlayerSpriteSheet
-from ..unit import mtr
+from ..constants import *
 
 
 class Player(Entity, Spritable, Killable, MapCollidable, Droppable, Stateable):

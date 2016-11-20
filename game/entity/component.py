@@ -9,7 +9,7 @@ from cocos.rect import Rect
 from pyglet.event import EventDispatcher
 
 from ..sprite import sheet
-from ..unit import mtr
+from ..constants import *
 
 
 def getvec2(x, y=None):

@@ -2,7 +2,7 @@ from cocos.euclid import Vector2
 from cocos.layer import ScrollableLayer
 
 from ..entity import Player
-from ..unit import mtr
+from ..constants import *
 
 
 _hspeed = 4 * mtr
@@ -18,7 +18,7 @@ class PlayerLayer(ScrollableLayer):
         self.player = Player(map, 0, 0)
         self.add(self.player)
 
-    def set_xvel(self, dir, is_key_press=None):
+    def set_x_vel(self, dir, is_key_press=None):
         """
         Utility for setting players X velocity from input
         :param dir: (int)  Direction multiplier.  1 for right, -1 for left.
@@ -27,18 +27,20 @@ class PlayerLayer(ScrollableLayer):
         :return:  None.
         """
         if is_key_press is None:
-            # Joystick control, normalise controller input
-            is_key_press = 1 if round(dir) else -1
-            dir = 1 if dir > 0 else -1
+            # Joystick control, normalise controller input to approximate
+            # keyboard behaviour
+            is_key_press = KEY_PRESS if round(dir) else KEY_RELEASE
+            dir = RIGHT if dir > 0 else LEFT
 
-        if is_key_press < 0:
+        if is_key_press == KEY_RELEASE:
             # Releasing a key; set velocity to 0
-            if (dir < 0) != (self.player.vel.x < 0):
-                # Don't do anything if the direction is not the same
-                return
-            dir = 0
-        # Set velocity
-        self.player.hvel = dir * _hspeed
+            if (dir == LEFT) == (self.player.vel.x < 0):
+                # If player is moving in the same direction as the previously-
+                # wanted motion direction, then must stop him as key release
+                self.player.hvel = 0
+        else:
+            # Key is pressed, set velocity
+            self.player.hvel = dir * _hspeed
 
     def set_jump(self, is_key_press):
         '''Utility for setting players Y velocity from jump input'''

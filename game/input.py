@@ -1,6 +1,7 @@
 from cocos.director import director
 from cocos.euclid import Vector2
 from cocos.layer.base_layers import Layer
+from .constants import *
 import pyglet.input
 
 import pyglet.window.key as K
@@ -117,6 +118,7 @@ class InputHandler(XInputHandler):
         XInputHandler.__init__(self)
         self.bindings = {}
         self.innerdead = joy_inner_deadzone
+        self.keys_pressed = set()
 
     def on_enter(self):
         if not isinstance(self, Layer):
@@ -129,15 +131,17 @@ class InputHandler(XInputHandler):
         XInputHandler.on_exit(self)
 
     def on_key_press(self, key, mod):
+        self.keys_pressed.add(key)
         action = _getaction(self.bindings, 'keyboard', key)
         if action is not None:
-            action(1)
+            action(KEY_PRESS)
             return True
 
     def on_key_release(self, key, mod):
+        self.keys_pressed.remove(key)
         action = _getaction(self.bindings, 'keyboard', key)
         if action is not None:
-            action(-1)
+            action(KEY_RELEASE)
             return True
 
     def on_mouse_motion(self, x, y, dx, dy):
@@ -155,19 +159,19 @@ class InputHandler(XInputHandler):
     def on_mouse_release(self, x, y, btn, mod):
         action = _getaction(self.bindings, 'mouse', btn)
         if action is not None:
-            action(-1, Vector2(x, y))
+            action(MOUSE_RELEASE, Vector2(x, y))
             return True
 
     def on_joybutton_press(self, joy, button):
         action = _getaction(self.bindings, joy, 'joystick', button)
         if action is not None:
-            action(1)
+            action(KEY_PRESS)
             return True
 
     def on_joybutton_release(self, joy, button):
         action = _getaction(self.bindings, joy, 'joystick', button)
         if action is not None:
-            action(-1)
+            action(KEY_RELEASE)
             return True
 
     def on_joyaxis_motion(self, joy, axis, value):

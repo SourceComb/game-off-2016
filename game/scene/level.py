@@ -10,7 +10,7 @@ from ..input import InputHandler, J, K, M
 from ..layer.player import PlayerLayer
 from ..layer.enemy import EnemyLayer
 from ..tiles import load_map
-from ..unit import mtr
+from ..constants import *
 
 
 class LevelScene(Scene, InputHandler):
@@ -99,8 +99,8 @@ class LevelScene(Scene, InputHandler):
         # Basic binds
         keybinds.update({
             K.UP: player_layer.set_jump,
-            K.LEFT: lambda d: player_layer.set_xvel(-1, d),
-            K.RIGHT: lambda d: player_layer.set_xvel(1, d),
+            K.LEFT: lambda d: player_layer.set_x_vel(LEFT, d),
+            K.RIGHT: lambda d: player_layer.set_x_vel(RIGHT, d),
         })
         # Extra binds
         keybinds.update({
@@ -119,7 +119,7 @@ class LevelScene(Scene, InputHandler):
         self.bindings['joystick'] = {}
         self.bindings['joystick'].update({
             J.A: player_layer.set_jump,
-            J.LSX: player_layer.set_xvel,
+            J.LSX: player_layer.set_x_vel,
 
             J.RSX: update_cam_x,
             J.RSY: update_cam_y
